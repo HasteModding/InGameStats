@@ -133,11 +133,6 @@ public class InGameStats : MonoBehaviour {
         else perfectLandingStreak = 0;
     }
 
-    private void OnDeath() {
-        noHit = false;
-        noDeath = false;
-    }
-
     /// <summary>
     /// Called when a new run (shard) starts.
     /// This method is used to reset the perfect landing streaks.
@@ -173,10 +168,10 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     private void Awake() {
         Instance = this;
-        On.GM_API.OnStartNewRun += (_) => OnStartNewRun();
-        On.GM_API.OnNewLevel += (_) => OnNewLevel();
-        On.GM_API.OnSpawnedInHub += (_) => OnStartNewRun();
-        
+        On.GM_API.OnStartNewRun += (orig) => {OnStartNewRun(); orig();};
+        On.GM_API.OnNewLevel += (orig) => {OnNewLevel(); orig();};
+        On.GM_API.OnSpawnedInHub += (orig) => {OnStartNewRun(); orig();};
+
         // Set up the Canvas
         _canvas = GetComponent<Canvas>();
         _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
