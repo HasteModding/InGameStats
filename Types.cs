@@ -6,7 +6,7 @@ namespace InGameStats;
 public enum StatType {
     PerfectLandingStreak,
     BestLandingStreak,
-    DistanceTraveled,
+    DistanceTravelled,
     Luck,
     Boost,
     Health,
@@ -16,4 +16,9 @@ public enum StatType {
     Shard,
     Level,
     Seed,
+    NoHit,
+    NoDeath,
+    NoItems,
+    OnlyPerfectLanding,
+    OnlySRanks,
 }

@@ -40,13 +40,34 @@ public class InGameStats : MonoBehaviour {
     public int bestPerfectLandingStreak = 0;
 
     /// <summary>
+    /// Indicates if the current run has no hit.
+    /// </summary>
+    public bool noHit = true;
+    /// <summary>
+    /// Indicates if the current run has no death.
+    /// </summary>
+    public bool noDeath = true;
+    /// <summary>
+    /// Indicates if the current run has no items.
+    /// </summary>
+    public bool noItems = true;
+    /// <summary>
+    /// Indicates if the current run has only perfect landings.
+    /// </summary>
+    public bool onlyPerfectLanding = true;
+    /// <summary>
+    /// Indicates if the current run has only S ranks.
+    /// </summary>
+    public bool onlySRanks = true;
+
+    /// <summary>
     /// List of enabled stats.
     /// This list contains the StatType enum values for the stats that will be displayed.
     /// </summary>
     public List<StatType> enabledStats = new() {
         StatType.PerfectLandingStreak,
         StatType.BestLandingStreak,
-        StatType.DistanceTraveled,
+        StatType.DistanceTravelled,
         StatType.Luck,
         StatType.Boost,
         StatType.Health,
@@ -56,6 +77,11 @@ public class InGameStats : MonoBehaviour {
         StatType.Shard,
         StatType.Level,
         StatType.Seed,
+        StatType.NoHit,
+        StatType.NoDeath,
+        StatType.NoItems,
+        StatType.OnlyPerfectLanding,
+        StatType.OnlySRanks,
     };
 
     /// <summary>
@@ -76,7 +102,7 @@ public class InGameStats : MonoBehaviour {
     public static readonly Dictionary<StatType, string> statDisplayNames = new() {
         { StatType.PerfectLandingStreak, "Perfect Streak" },
         { StatType.BestLandingStreak, "Best Streak" },
-        { StatType.DistanceTraveled, "Distance Traveled" },
+        { StatType.DistanceTravelled, "Distance Travelled" },
         { StatType.Luck, "Luck" },
         { StatType.Boost, "Boost" },
         { StatType.Health, "Health" },
@@ -86,6 +112,11 @@ public class InGameStats : MonoBehaviour {
         { StatType.Shard, "Shard" },
         { StatType.Level, "Level" },
         { StatType.Seed, "Seed" },
+        { StatType.NoHit, "No Hit" },
+        { StatType.NoDeath, "No Death" },
+        { StatType.NoItems, "No Items" },
+        { StatType.OnlyPerfectLanding, "Only Perfect Landing" },
+        { StatType.OnlySRanks, "Only S Ranks" },
     };
 
     /// <summary>
@@ -99,8 +130,12 @@ public class InGameStats : MonoBehaviour {
             if (++perfectLandingStreak > bestPerfectLandingStreak)
                 bestPerfectLandingStreak = perfectLandingStreak;
         }
-        else
-            perfectLandingStreak = 0;
+        else perfectLandingStreak = 0;
+    }
+
+    private void OnDeath() {
+        noHit = false;
+        noDeath = false;
     }
 
     /// <summary>
@@ -111,6 +146,11 @@ public class InGameStats : MonoBehaviour {
         // Reset the perfect landing streaks when a new run starts
         perfectLandingStreak = 0;
         bestPerfectLandingStreak = 0;
+        noHit = true;
+        noDeath = true;
+        noItems = true;
+        onlyPerfectLanding = true;
+        onlySRanks = true;
     }
 
     /// <summary>
@@ -119,11 +159,12 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     private void OnNewLevel() {
         // Check if the player is not null and if the character is not null
-        var movement = Player.localPlayer?.character.refs.movement;
-        if (movement != null) {
-            movement.landAction = (Action<LandingType, bool>)Delegate.Remove(movement.landAction, new Action<LandingType, bool>(OnLanding));
-            movement.landAction = (Action<LandingType, bool>)Delegate.Combine(movement.landAction, new Action<LandingType, bool>(OnLanding));
-        }
+        Player player = Player.localPlayer;
+        if (player == null) return;
+
+        PlayerMovement movement = player.character.refs.movement;
+        movement.landAction = (Action<LandingType, bool>)Delegate.Remove(movement.landAction, new Action<LandingType, bool>(OnLanding));
+        movement.landAction = (Action<LandingType, bool>)Delegate.Combine(movement.landAction, new Action<LandingType, bool>(OnLanding));
     }
 
     /// <summary>
@@ -134,6 +175,7 @@ public class InGameStats : MonoBehaviour {
         Instance = this;
         On.GM_API.OnStartNewRun += (_) => OnStartNewRun();
         On.GM_API.OnNewLevel += (_) => OnNewLevel();
+        On.GM_API.OnSpawnedInHub += (_) => OnStartNewRun();
         
         // Set up the Canvas
         _canvas = GetComponent<Canvas>();
@@ -187,6 +229,13 @@ public class InGameStats : MonoBehaviour {
     /// It updates the stat texts with the current run values.
     /// </summary>
     private void Update() {
+        if (!GetDamageTaken())
+            noHit = false;
+        if (!GetOnlySRank())
+            onlySRanks = false;
+        if (!GetOnlyPerfectLanding())
+            onlyPerfectLanding = false;
+
         // Update the stat texts with the current values
         foreach (StatType stat in enabledStats) {
             string value = GetStatValue(stat);
@@ -211,6 +260,55 @@ public class InGameStats : MonoBehaviour {
     /// <example>0.5f will be converted to "50.00%"</example>
     /// <returns>The formatted string representation of the percentile value.</returns>
     private static string Percentile(float percentile) => (percentile * 100).ToString("F2") + "%";
+
+    /// <summary>
+    /// Checks if the current run has taken damage.
+    /// This is done by checking the number of damage taken in the current run stats.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetDamageTaken() {
+        return (
+            !HasteStats.TryGetRunStat(HasteStatType.STAT_DAMAGE_TAKEN, out int damageTakenCount) ||
+            damageTakenCount == 0
+        );
+    }
+
+    /// <summary>
+    /// Checks if the current run has only perfect landings.
+    /// This is done by checking the number of landings in the current run and comparing it to the number of perfect landings.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetOnlyPerfectLanding() {
+        return (
+            !HasteStats.TryGetRunStat(HasteStatType.STAT_TOTAL_LANDINGS, out int totalLandingCount) ||
+            (
+                HasteStats.TryGetRunStat(HasteStatType.STAT_PERFECT_LANDINGS, out int perfectLandingCount) &&
+                perfectLandingCount >= totalLandingCount
+            )
+        );
+    }
+
+    /// <summary>
+    /// Checks if the current run has only S ranks.
+    /// This is done by checking the number of ranks not equal to S in the current run stats.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetOnlySRank() {
+        HasteStatType[] unapprovedRanks = {
+            HasteStatType.STAT_RANK_A_LEVELS,
+            HasteStatType.STAT_RANK_B_LEVELS,
+            HasteStatType.STAT_RANK_C_LEVELS,
+            HasteStatType.STAT_RANK_D_LEVELS,
+            HasteStatType.STAT_RANK_E_LEVELS,
+        };
+
+        foreach (HasteStatType rank in unapprovedRanks) {
+            if (HasteStats.TryGetRunStat(rank, out int rankCount) && rankCount > 0)
+                return false;
+        }
+
+        return true;
+    }
     
     /// <summary>
     /// Gets the value of a specific stat based on the provided StatType.
@@ -229,7 +327,7 @@ public class InGameStats : MonoBehaviour {
         return stat switch {
             StatType.PerfectLandingStreak => perfectLandingStreak.ToString(),
             StatType.BestLandingStreak => bestPerfectLandingStreak.ToString(),
-            StatType.DistanceTraveled => persistentData.distanceTraveled.ToString("F1"),
+            StatType.DistanceTravelled => persistentData.distanceTraveled.ToString("F1"),
             StatType.Luck => Percentile(ComputeStatValue(stats.luck)),
             StatType.Boost => Percentile(characterData.GetBoost()),
             StatType.Health => persistentData.currentHealth.ToString("F1"),
@@ -237,8 +335,13 @@ public class InGameStats : MonoBehaviour {
             StatType.MaxEnergy => ComputeStatValue(stats.maxEnergy).ToString("F1"),
             StatType.PickupRange => Percentile(ComputeStatValue(stats.sparkPickupRange)),
             StatType.Shard => (RunHandler.RunData.shardID + 1).ToString(),
-            StatType.Level => (RunHandler.RunData.currentLevel + 1).ToString(),
+            StatType.Level => (RunHandler.RunData.currentLevel + 1).ToString() + "/" + RunHandler.RunData.MaxLevels.ToString(),
             StatType.Seed => RunHandler.RunData.currentSeed.ToString(),
+            StatType.NoDeath => RunHandler.statsCollector.Deaths.Count != 0 ? "No" : "Yes",
+            StatType.NoItems => RunHandler.statsCollector.Items.Count != 0 ? "No" : "Yes",
+            StatType.NoHit => noHit ? "Yes" : "No",
+            StatType.OnlyPerfectLanding => onlyPerfectLanding ? "Yes" : "No",
+            StatType.OnlySRanks => onlySRanks ? "Yes" : "No",
             _ => "N/A"
         };
     }
