@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Reflection;
 
 namespace InGameStats;
 
@@ -30,6 +31,10 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public int fontSize = 12;
 
+    /// <summary>
+    /// Indicates if only the true perfect landings should be counted.
+    /// </summary>
+    public bool strictPerfectLanding = false;
     /// <summary>
     /// The current perfect landing streak.
     /// </summary>
@@ -121,16 +126,40 @@ public class InGameStats : MonoBehaviour {
 
     /// <summary>
     /// Called when the player lands.
-    /// This method is used to update the perfect landing streaks.
+    /// This method is used to update the perfect landing streaks when not in strict mode.
     /// </summary>
     /// <param name="landingType">The type of landing (Perfect, Good, Bad)</param>
     /// <param name="saved">Indicates if the landing was saved (unused)</param>
     private void OnLanding(LandingType landingType, bool saved) {
+        if (strictPerfectLanding) return;
         if (landingType == LandingType.Perfect) {
             if (++perfectLandingStreak > bestPerfectLandingStreak)
                 bestPerfectLandingStreak = perfectLandingStreak;
         }
         else perfectLandingStreak = 0;
+    }
+
+    /// <summary>
+    /// Called when the player lands.
+    /// This method is used to update the perfect landing streaks when in strict mode.
+    /// </summary>
+    /// <param name="landing">PlayerMovement.Landing internal type with all infos about the landing</param>
+    private void OnLanding(object landing) {
+        if (!strictPerfectLanding) return;
+        const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        Type landingClassType = landing.GetType();
+        FieldInfo landingScoreField = landingClassType.GetField("landingScore", bindingFlags);
+        FieldInfo sinceGroundedBeforeLandingField = landingClassType.GetField("sinceGroundedBeforeLanding", bindingFlags);
+        if ((float) sinceGroundedBeforeLandingField.GetValue(landing) > 0.6f) {
+            bool isPerfect = (float) landingScoreField.GetValue(landing) > 0.95f;
+            if (isPerfect) {
+                perfectLandingStreak++;
+                if (perfectLandingStreak > bestPerfectLandingStreak)
+                    bestPerfectLandingStreak = perfectLandingStreak;
+            } else {
+                perfectLandingStreak = 0;
+            }
+        }
     }
 
     /// <summary>
@@ -162,6 +191,10 @@ public class InGameStats : MonoBehaviour {
         movement.landAction = (Action<LandingType, bool>)Delegate.Combine(movement.landAction, new Action<LandingType, bool>(OnLanding));
     }
 
+    interface PlayerMovementLanding {
+        float sinceGroundedBeforeLanding { get; }
+    }
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// This method is used to initialize the plugin and set up the event handlers.
@@ -169,8 +202,13 @@ public class InGameStats : MonoBehaviour {
     private void Awake() {
         Instance = this;
         On.GM_API.OnStartNewRun += (orig) => {OnStartNewRun(); orig();};
-        On.GM_API.OnNewLevel += (orig) => {OnNewLevel(); orig();};
         On.GM_API.OnSpawnedInHub += (orig) => {OnStartNewRun(); orig();};
+        On.GM_API.OnNewLevel += (orig) => {OnNewLevel(); orig();};
+        On.PlayerMovement.GetLanding += (orig, self, hit) => {
+            object landing = orig(self, hit);
+            OnLanding(landing);
+            return landing;
+        };
 
         // Set up the Canvas
         _canvas = GetComponent<Canvas>();
@@ -203,6 +241,7 @@ public class InGameStats : MonoBehaviour {
             TextMeshProUGUI text = statObject.AddComponent<TextMeshProUGUI>();
             text.fontSize = fontSize;
             text.color = Color.white;
+            text.text = "N/A";
             // TODO: AkzidenzGroteskPro-BoldCnIt SDF font should be used for the text
             // text.font = TMP_FontAsset.CreateFontAsset(new Font)
 
@@ -226,17 +265,21 @@ public class InGameStats : MonoBehaviour {
     private void Update() {
         if (!GetDamageTaken())
             noHit = false;
-        if (!GetOnlySRank())
-            onlySRanks = false;
         if (!GetOnlyPerfectLanding())
             onlyPerfectLanding = false;
+        if (!GetOnlySRank())
+            onlySRanks = false;
 
         // Update the stat texts with the current values
-        foreach (StatType stat in enabledStats) {
-            string value = GetStatValue(stat);
-            if (_statTexts.TryGetValue(stat, out TextMeshProUGUI? text))
-                text.text = $"{statDisplayNames[stat]}: {value}";
-        }
+        foreach (StatType stat in enabledStats)
+            if (_statTexts.TryGetValue(stat, out TextMeshProUGUI? text) && text != null) {
+                try {
+                    string value = GetStatValue(stat);
+                    text.text = $"{statDisplayNames[stat]}: {value}";
+                } catch {
+                    text.text = $"{statDisplayNames[stat]}: N/A";
+                }
+            }
     }
 
     /// <summary>
@@ -315,20 +358,16 @@ public class InGameStats : MonoBehaviour {
 
         if (!player) return "N/A";
 
-        PlayerStats stats = player.stats;
-        PersistentPlayerData persistentData = player.data;
-        PlayerCharacter.PlayerData characterData = player.character.data;
-
         return stat switch {
-            StatType.PerfectLandingStreak => perfectLandingStreak.ToString(),
+            StatType.PerfectLandingStreak => perfectLandingStreak.ToString() + (strictPerfectLanding ? " (Strict)" : ""),
             StatType.BestLandingStreak => bestPerfectLandingStreak.ToString(),
-            StatType.DistanceTravelled => persistentData.distanceTraveled.ToString("F1"),
-            StatType.Luck => Percentile(ComputeStatValue(stats.luck)),
-            StatType.Boost => Percentile(characterData.GetBoost()),
-            StatType.Health => persistentData.currentHealth.ToString("F1"),
-            StatType.MaxHealth => ComputeStatValue(stats.maxHealth).ToString("F1"),
-            StatType.MaxEnergy => ComputeStatValue(stats.maxEnergy).ToString("F1"),
-            StatType.PickupRange => Percentile(ComputeStatValue(stats.sparkPickupRange)),
+            StatType.DistanceTravelled => player.data.distanceTraveled.ToString("F1"),
+            StatType.Luck => Percentile(ComputeStatValue(player.stats.luck)),
+            StatType.Boost => Percentile(player.character.data.GetBoost()),
+            StatType.Health => player.data.currentHealth.ToString("F1"),
+            StatType.MaxHealth => ComputeStatValue(player.stats.maxHealth).ToString("F1"),
+            StatType.MaxEnergy => ComputeStatValue(player.stats.maxEnergy).ToString("F1"),
+            StatType.PickupRange => Percentile(ComputeStatValue(player.stats.sparkPickupRange)),
             StatType.Shard => (RunHandler.RunData.shardID + 1).ToString(),
             StatType.Level => (RunHandler.RunData.currentLevel + 1).ToString() + "/" + RunHandler.RunData.MaxLevels.ToString(),
             StatType.Seed => RunHandler.RunData.currentSeed.ToString(),

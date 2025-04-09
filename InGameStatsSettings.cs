@@ -157,6 +157,21 @@ public class OnlySRanksSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class StrictPerfectLandingSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("Off");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("On");
+    public override void ApplyValue() => Debug.Log($"Strict Perfect Landing: {Value}");
+    protected override bool GetDefaultValue() => false;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Strict Perfect Landing Mode (no landing saves)");
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.strictPerfectLanding = Value;
+    }
+}
+
+[HasteSetting]
 public class ApplySettings : ButtonSetting, IExposedSetting {
     public override void OnClicked() {
         Debug.Log("ApplySettings clicked");
@@ -198,6 +213,7 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
             InGameStats.Instance.enabledStats.Add(StatType.OnlyPerfectLanding);
         if (GameHandler.Instance.SettingsHandler.GetSetting<OnlySRanksSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.OnlySRanks);
+        InGameStats.Instance.strictPerfectLanding = GameHandler.Instance.SettingsHandler.GetSetting<StrictPerfectLandingSetting>().Value;
         InGameStats.Instance.CreateStatUI();
     }
 
