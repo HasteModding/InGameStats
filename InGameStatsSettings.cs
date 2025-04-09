@@ -13,7 +13,7 @@ public class XBaseOffsetSetting : FloatSetting, IExposedSetting {
     public LocalizedString GetDisplayName() => new UnlocalizedString("X Base Offset");
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
-    protected override float2 GetMinMaxValue() => new (0f, Screen.height);
+    protected override float2 GetMinMaxValue() => new (0f, Screen.width);
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
@@ -82,8 +82,8 @@ public class BestLandingStreakSetting : EnableStatSetting {
 }
 
 [HasteSetting]
-public class DistanceTraveledSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.DistanceTraveled;
+public class DistanceTravelledSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.DistanceTravelled;
 }
 
 [HasteSetting]
@@ -132,6 +132,31 @@ public class SeedSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class NoHitSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.NoHit;
+}
+
+[HasteSetting]
+public class NoDeathSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.NoDeath;
+}
+
+[HasteSetting]
+public class NoItemsSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.NoItems;
+}
+
+[HasteSetting]
+public class OnlyPerfectLandingSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.OnlyPerfectLanding;
+}
+
+[HasteSetting]
+public class OnlySRanksSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.OnlySRanks;
+}
+
+[HasteSetting]
 public class ApplySettings : ButtonSetting, IExposedSetting {
     public override void OnClicked() {
         Debug.Log("ApplySettings clicked");
@@ -143,6 +168,8 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
             InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
         if (GameHandler.Instance.SettingsHandler.GetSetting<BestLandingStreakSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.BestLandingStreak);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<DistanceTravelledSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.DistanceTravelled);
         if (GameHandler.Instance.SettingsHandler.GetSetting<LuckSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.Luck);
         if (GameHandler.Instance.SettingsHandler.GetSetting<BoostSetting>().Value)
@@ -161,6 +188,16 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
             InGameStats.Instance.enabledStats.Add(StatType.Level);
         if (GameHandler.Instance.SettingsHandler.GetSetting<SeedSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.Seed);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<NoHitSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.NoHit);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<NoDeathSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.NoDeath);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<NoItemsSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.NoItems);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<OnlyPerfectLandingSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.OnlyPerfectLanding);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<OnlySRanksSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.OnlySRanks);
         InGameStats.Instance.CreateStatUI();
     }
 
