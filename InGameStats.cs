@@ -1,46 +1,8 @@
-﻿using Landfall.Haste;
-using Landfall.Modding;
-using Unity.Mathematics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Localization;
-using Zorro.Settings;
-using Object = UnityEngine.Object;
 using TMPro;
 
 namespace InGameStats;
-
-/// <summary>
-/// Enum of available stats
-/// </summary>
-public enum StatType {
-    PerfectLandingStreak,
-    BestLandingStreak,
-    DistanceTraveled,
-    Luck,
-    Boost,
-    Health,
-    MaxHealth,
-    MaxEnergy,
-    PickupRange,
-    Shard,
-    Level,
-    Seed,
-}
-
-/// <summary>
-/// InGameStats plugin class. This is the entry point for the mod.
-/// </summary>
-[LandfallPlugin]
-public class InGameStatsProgram {
-    public static string GetCategory() => "InGameStats";
-
-    static InGameStatsProgram() {
-        GameObject instance = new (nameof(InGameStats));
-        Object.DontDestroyOnLoad(instance);
-        instance.AddComponent<InGameStats>();
-    }
-}
 
 /// <summary>
 /// Stats display plugin object.
@@ -49,24 +11,38 @@ public class InGameStatsProgram {
 [RequireComponent(typeof(CanvasScaler))]
 [RequireComponent(typeof(GraphicRaycaster))]
 public class InGameStats : MonoBehaviour {
+    /// <summary>
+    /// Singleton instance of the InGameStats class.
+    /// This is used to access the instance of the class from other scripts.
+    /// </summary>
     public static InGameStats Instance { get; private set; } = null!;
 
-    // Positioning and font size settings
+    /// <summary>
+    /// The base Y offset for the stats text.
+    /// </summary>
     public float yBaseOffset = 10f;
+    /// <summary>
+    /// The base Y offset for the stats text.
+    /// </summary>
     public float xBaseOffset = 10f;
+    /// <summary>
+    /// The font size of the stats text.
+    /// </summary>
     public int fontSize = 12;
 
-    // Manual streak stats
+    /// <summary>
+    /// The current perfect landing streak.
+    /// </summary>
     public int perfectLandingStreak = 0;
+    /// <summary>
+    /// The best perfect landing streak (across the current run).
+    /// </summary>
     public int bestPerfectLandingStreak = 0;
 
-    // Flag to check if the perfect counter is initialized
-    // This is used to avoid multiple subscriptions to the landing action
-    // and to ensure that the perfect counter is only initialized once
-    public bool perfectCounterInit = true;
-
-    // List of enabled stats
-    // This list is populated by the settings and is used to determine which stats to display
+    /// <summary>
+    /// List of enabled stats.
+    /// This list contains the StatType enum values for the stats that will be displayed.
+    /// </summary>
     public List<StatType> enabledStats = new() {
         StatType.PerfectLandingStreak,
         StatType.BestLandingStreak,
@@ -82,13 +58,21 @@ public class InGameStats : MonoBehaviour {
         StatType.Seed,
     };
 
-    // Contains the Canvas stats will be displayed on
+    /// <summary>
+    /// Reference to the Canvas component.
+    /// This is used to set up the UI elements for the stats display.
+    /// </summary>
     private Canvas? _canvas;
 
-    // Dictionary to hold the TextMeshProUGUI components for each stat
+    /// <summary>
+    /// Dictionary to hold the stat texts for each stat type.
+    /// This is used to update the text values of the stats in the UI.
+    /// </summary>
     private Dictionary<StatType, TextMeshProUGUI> _statTexts = new();
 
-    // Dictionary to hold the display names for each stat
+    /// <summary>
+    /// Dictionary to hold the display names for each stat type.
+    /// </summary>
     public static readonly Dictionary<StatType, string> statDisplayNames = new() {
         { StatType.PerfectLandingStreak, "Perfect Streak" },
         { StatType.BestLandingStreak, "Best Streak" },
@@ -104,7 +88,12 @@ public class InGameStats : MonoBehaviour {
         { StatType.Seed, "Seed" },
     };
 
-    // Event handler for landing action (update the perfect landing streak)
+    /// <summary>
+    /// Called when the player lands.
+    /// This method is used to update the perfect landing streaks.
+    /// </summary>
+    /// <param name="landingType">The type of landing (Perfect, Good, Bad)</param>
+    /// <param name="saved">Indicates if the landing was saved (unused)</param>
     private void OnLanding(LandingType landingType, bool saved) {
         if (landingType == LandingType.Perfect) {
             if (++perfectLandingStreak > bestPerfectLandingStreak)
@@ -114,23 +103,33 @@ public class InGameStats : MonoBehaviour {
             perfectLandingStreak = 0;
     }
 
+    /// <summary>
+    /// Called when a new run (shard) starts.
+    /// This method is used to reset the perfect landing streaks.
+    /// </summary>
     private void OnStartNewRun() {
         // Reset the perfect landing streaks when a new run starts
         perfectLandingStreak = 0;
         bestPerfectLandingStreak = 0;
     }
 
+    /// <summary>
+    /// Called when a new level (fragment) is loaded.
+    /// This method is used to set up the landing action for the player character.
+    /// </summary>
     private void OnNewLevel() {
         // Check if the player is not null and if the character is not null
         var movement = Player.localPlayer?.character.refs.movement;
         if (movement != null) {
             movement.landAction = (Action<LandingType, bool>)Delegate.Remove(movement.landAction, new Action<LandingType, bool>(OnLanding));
             movement.landAction = (Action<LandingType, bool>)Delegate.Combine(movement.landAction, new Action<LandingType, bool>(OnLanding));
-            perfectCounterInit = true;
         }
     }
 
-    // Awake is called when the script instance is being loaded
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// This method is used to initialize the plugin and set up the event handlers.
+    /// </summary>
     private void Awake() {
         Instance = this;
         On.GM_API.OnStartNewRun += (_) => OnStartNewRun();
@@ -148,8 +147,10 @@ public class InGameStats : MonoBehaviour {
         CreateStatUI();
     }
 
-    // Create the UI elements for each enabled stat
-    // This method is called when the mod is loaded and when settings are changed
+    /// <summary>
+    /// Creates the empty UI elements for the enabled stats.
+    /// This method is called when the mod is loaded or when the settings are changed.
+    /// </summary>
     public void CreateStatUI() {
         // Destroy existing stat texts
         foreach (KeyValuePair<StatType, TextMeshProUGUI> text in _statTexts)
@@ -181,6 +182,10 @@ public class InGameStats : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Update is called once per frame.
+    /// It updates the stat texts with the current run values.
+    /// </summary>
     private void Update() {
         // Update the stat texts with the current values
         foreach (StatType stat in enabledStats) {
@@ -190,10 +195,28 @@ public class InGameStats : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Computes the value of a stat based on its base value and multiplier.
+    /// </summary>
+    /// <param name="stat">The PlayerStat object containing the base value and multiplier.</param>
+    /// <example>For example, if baseValue is 10 and multiplier is 1.5, the result will be 15.</example>
+    /// <returns>The computed stat value.</returns>
     private static float ComputeStatValue(PlayerStat stat) => stat.baseValue * stat.multiplier;
     
+    /// <summary>
+    /// Converts a percentile value to a string representation.
+    /// The value is multiplied by 100 and formatted to two decimal places, followed by a percent sign.
+    /// </summary>
+    /// <param name="percentile">The percentile value to convert.</param>
+    /// <example>0.5f will be converted to "50.00%"</example>
+    /// <returns>The formatted string representation of the percentile value.</returns>
     private static string Percentile(float percentile) => (percentile * 100).ToString("F2") + "%";
     
+    /// <summary>
+    /// Gets the value of a specific stat based on the provided StatType.
+    /// </summary>
+    /// <param name="stat">The StatType of the stat to retrieve.</param>
+    /// <returns>The string representation of the stat value.</returns>
     private string GetStatValue(StatType stat) {
         Player? player = Player.localPlayer;
 
@@ -219,167 +242,4 @@ public class InGameStats : MonoBehaviour {
             _ => "N/A"
         };
     }
-}
-
-[HasteSetting]
-public class XBaseOffsetSetting : FloatSetting, IExposedSetting {
-    public override void ApplyValue() => Debug.Log($"XBaseOffset: {Value}");
-    protected override float GetDefaultValue() => 10f;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("X Base Offset");
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-
-    protected override float2 GetMinMaxValue() => new (0f, Screen.height);
-
-    public override void Load(ISettingsSaveLoad loader) {
-        base.Load(loader);
-        InGameStats.Instance.xBaseOffset = Value;
-    }
-}
-
-[HasteSetting]
-public class YBaseOffsetSetting : FloatSetting, IExposedSetting {
-    public override void ApplyValue() => Debug.Log($"YBaseOffset: {Value}");
-    protected override float GetDefaultValue() => 0f;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Y Base Offset");
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-
-    protected override float2 GetMinMaxValue() => new (0f, Screen.height);
-    
-    public override void Load(ISettingsSaveLoad loader) {
-        base.Load(loader);
-        InGameStats.Instance.yBaseOffset = Value;
-        InGameStats.Instance.CreateStatUI();
-    }
-}
-
-[HasteSetting]
-public class FontSizeSetting : IntSetting, IExposedSetting {
-    public override void ApplyValue() => Debug.Log($"FontSize: {Value}");
-    protected override int GetDefaultValue() => 12;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Font Size");
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-
-    public override void Load(ISettingsSaveLoad loader) {
-        base.Load(loader);
-        InGameStats.Instance.fontSize = Value;
-        InGameStats.Instance.CreateStatUI();
-    }
-}
-
-public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Off");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("On");
-    public override void ApplyValue() => Debug.Log($"Enable {InGameStats.statDisplayNames[StatType]}: {Value}");
-    protected override bool GetDefaultValue() => true;
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-
-    protected abstract StatType StatType { get; }
-    public LocalizedString GetDisplayName() => new UnlocalizedString(InGameStats.statDisplayNames[StatType]);
-
-    public override void Load(ISettingsSaveLoad loader) {
-        base.Load(loader);
-        InGameStats.Instance.enabledStats.Remove(StatType);
-        if (Value)
-            InGameStats.Instance.enabledStats.Add(StatType);
-        else
-            InGameStats.Instance.CreateStatUI();
-    }
-}
-
-[HasteSetting]
-public class PerfectLandingStreakSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.PerfectLandingStreak;
-}
-
-[HasteSetting]
-public class BestLandingStreakSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.BestLandingStreak;
-}
-
-[HasteSetting]
-public class DistanceTraveledSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.DistanceTraveled;
-}
-
-[HasteSetting]
-public class LuckSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.Luck;
-}
-
-[HasteSetting]
-public class BoostSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.Boost;
-}
-
-[HasteSetting]
-public class HealthSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.Health;
-}
-
-[HasteSetting]
-public class MaxHealthSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.MaxHealth;
-}
-
-[HasteSetting]
-public class MaxEnergySetting : EnableStatSetting {
-    protected override StatType StatType => StatType.MaxEnergy;
-}
-
-[HasteSetting]
-public class PickupRangeSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.PickupRange;
-}
-
-[HasteSetting]
-public class ShardSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.Shard;
-}
-
-[HasteSetting]
-public class LevelSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.Level;
-}
-
-[HasteSetting]
-public class SeedSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.Seed;
-}
-
-[HasteSetting]
-public class ApplySettings : ButtonSetting, IExposedSetting {
-    public override void OnClicked() {
-        Debug.Log("ApplySettings clicked");
-        InGameStats.Instance.yBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<YBaseOffsetSetting>().Value;
-        InGameStats.Instance.xBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<XBaseOffsetSetting>().Value;
-        InGameStats.Instance.fontSize = GameHandler.Instance.SettingsHandler.GetSetting<FontSizeSetting>().Value;
-        InGameStats.Instance.enabledStats.Clear();
-        if (GameHandler.Instance.SettingsHandler.GetSetting<PerfectLandingStreakSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<BestLandingStreakSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.BestLandingStreak);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<LuckSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Luck);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<BoostSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Boost);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<HealthSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Health);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<MaxHealthSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.MaxHealth);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<MaxEnergySetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.MaxEnergy);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<PickupRangeSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.PickupRange);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<ShardSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Shard);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<LevelSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Level);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<SeedSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Seed);
-        InGameStats.Instance.CreateStatUI();
-    }
-
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Apply Settings");
-    public override string GetButtonText() => "Apply Settings";
 }
