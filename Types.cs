@@ -7,6 +7,8 @@ public enum StatType {
     PerfectLandingStreak,
     BestLandingStreak,
     DistanceTravelled,
+    GroundDistanceTravelled,
+    AirDistanceTravelled,
     Luck,
     Boost,
     Health,

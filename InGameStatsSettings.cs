@@ -87,6 +87,16 @@ public class DistanceTravelledSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class GroundDistanceTravelledSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.GroundDistanceTravelled;
+}
+
+[HasteSetting]
+public class AirDistanceTravelledSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.AirDistanceTravelled;
+}
+
+[HasteSetting]
 public class LuckSetting : EnableStatSetting {
     protected override StatType StatType => StatType.Luck;
 }
@@ -185,6 +195,10 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
             InGameStats.Instance.enabledStats.Add(StatType.BestLandingStreak);
         if (GameHandler.Instance.SettingsHandler.GetSetting<DistanceTravelledSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.DistanceTravelled);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<GroundDistanceTravelledSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.GroundDistanceTravelled);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<AirDistanceTravelledSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.AirDistanceTravelled);
         if (GameHandler.Instance.SettingsHandler.GetSetting<LuckSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.Luck);
         if (GameHandler.Instance.SettingsHandler.GetSetting<BoostSetting>().Value)
