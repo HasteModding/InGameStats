@@ -6,6 +6,7 @@ namespace InGameStats;
 public enum StatType {
     PerfectLandingStreak,
     BestLandingStreak,
+    AverageLandingScore,
     DistanceTravelled,
     GroundDistanceTravelled,
     AirDistanceTravelled,
@@ -23,4 +24,13 @@ public enum StatType {
     NoItems,
     OnlyPerfectLanding,
     OnlySRanks,
+}
+
+/// <summary>
+/// Enum of available stats
+/// </summary>
+public enum PerfectLandingStreakType {
+    None,
+    Standard,
+    Strict,
 }
