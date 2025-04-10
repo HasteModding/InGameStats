@@ -40,6 +40,11 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public int perfectLandingStreak = 0;
     /// <summary>
+    /// The average landing score.
+    /// </summary>
+    public float averageLandingScore = 0f;
+    private int _landingCount = 0;
+    /// <summary>
     /// The best perfect landing streak (across the current run).
     /// </summary>
     public int bestPerfectLandingStreak = 0;
@@ -65,6 +70,14 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public bool onlySRanks = true;
 
+    public bool colors = true;
+    public bool font = true;
+
+    /// <summary>
+    /// Reference to the font asset used for the stats text.
+    /// </summary>
+    public TMP_FontAsset fontAsset = null!;
+
     /// <summary>
     /// List of enabled stats.
     /// This list contains the StatType enum values for the stats that will be displayed.
@@ -72,6 +85,7 @@ public class InGameStats : MonoBehaviour {
     public List<StatType> enabledStats = new() {
         StatType.PerfectLandingStreak,
         StatType.BestLandingStreak,
+        StatType.AverageLandingScore,
         StatType.DistanceTravelled,
         StatType.GroundDistanceTravelled,
         StatType.AirDistanceTravelled,
@@ -107,8 +121,9 @@ public class InGameStats : MonoBehaviour {
     /// Dictionary to hold the display names for each stat type.
     /// </summary>
     public static readonly Dictionary<StatType, string> statDisplayNames = new() {
-        { StatType.PerfectLandingStreak, "Perfect Streak" },
-        { StatType.BestLandingStreak, "Best Streak" },
+        { StatType.PerfectLandingStreak, "Perfect Land. Streak" },
+        { StatType.BestLandingStreak, "Best Land. Streak" },
+        { StatType.AverageLandingScore, "Average Land. Score" },
         { StatType.DistanceTravelled, "Distance" },
         { StatType.GroundDistanceTravelled, "Ground Distance" },
         { StatType.AirDistanceTravelled, "Air Distance" },
@@ -149,13 +164,18 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     /// <param name="landing">PlayerMovement.Landing internal type with all infos about the landing</param>
     private void OnLanding(object landing) {
-        if (!strictPerfectLanding) return;
         const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
         Type landingClassType = landing.GetType();
         FieldInfo landingScoreField = landingClassType.GetField("landingScore", bindingFlags);
         FieldInfo sinceGroundedBeforeLandingField = landingClassType.GetField("sinceGroundedBeforeLanding", bindingFlags);
         if ((float) sinceGroundedBeforeLandingField.GetValue(landing) > 0.6f) {
-            bool isPerfect = (float) landingScoreField.GetValue(landing) > 0.95f;
+            // Update the average landing score and count
+            float landingScore = (float) landingScoreField.GetValue(landing);
+            _landingCount++;
+            averageLandingScore += (landingScore - averageLandingScore) / _landingCount;
+            // Update the perfect landing streaks if in strict mode
+            if (!strictPerfectLanding) return;
+            bool isPerfect = landingScore > 0.95f;
             if (isPerfect) {
                 perfectLandingStreak++;
                 if (perfectLandingStreak > bestPerfectLandingStreak)
@@ -174,6 +194,8 @@ public class InGameStats : MonoBehaviour {
         // Reset the perfect landing streaks when a new run starts
         perfectLandingStreak = 0;
         bestPerfectLandingStreak = 0;
+        averageLandingScore = 0f;
+        _landingCount = 0;
         noHit = true;
         noDeath = true;
         noItems = true;
@@ -239,22 +261,76 @@ public class InGameStats : MonoBehaviour {
         // Create new stat texts based on the enabled stats
         float yOffset = yBaseOffset;
         foreach (StatType stat in enabledStats) {
+            // Create the stat text
             GameObject statObject = new(stat.ToString());
             statObject.transform.SetParent(_canvas!.transform);
 
             TextMeshProUGUI text = statObject.AddComponent<TextMeshProUGUI>();
-            text.fontSize = fontSize;
-            text.color = Color.white;
-            text.text = "N/A";
-            // TODO: AkzidenzGroteskPro-BoldCnIt SDF font should be used for the text
-            // text.font = TMP_FontAsset.CreateFontAsset(new Font)
 
             RectTransform rectTransform = text.GetComponent<RectTransform>();
             rectTransform.anchorMin = new Vector2(0, 1);
             rectTransform.anchorMax = new Vector2(0, 1);
             rectTransform.pivot = new Vector2(0, 1);
             rectTransform.anchoredPosition = new Vector2(xBaseOffset, -yOffset);
-            rectTransform.sizeDelta = new Vector2(Screen.width, fontSize + 5f);
+            rectTransform.sizeDelta = new Vector2(Screen.width / 3f, fontSize + 5f);
+
+            // Set the text properties
+            text.fontSize = fontSize;
+            text.color = Color.white;
+            text.outlineColor = Color.black;
+            text.text = "N/A";
+
+            if (font) {
+                // Set the font asset if it is not already set
+                if (fontAsset == null) {
+                    TMP_FontAsset[] fonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
+                    Debug.Log($"Found {fonts.Length} font assets.");
+                    foreach (TMP_FontAsset font in fonts) {
+                        Debug.Log($"Font name: {font.name}");
+                        if (font.name == "AkzidenzGroteskPro-Bold SDF") {
+                            fontAsset = font;
+                            break;
+                        }
+                    }
+                    if (fontAsset == null) {
+                        Debug.LogError("Font asset not found. Using default font.");
+                    } else {
+                        Debug.Log($"Font asset found: {fontAsset.name}");
+                    }
+                }
+
+                // Set the font asset to the text component
+                // Check if the font asset is not null before assigning it to the text component
+                if (fontAsset != null) {
+                    text.font = fontAsset;
+                    text.fontSharedMaterial = fontAsset.material;
+                    text.fontSharedMaterial.mainTexture = fontAsset.material.mainTexture;
+                }
+            }
+
+            if (colors) {
+                // Set the color of the text based on the stat type
+                switch (stat) {
+                    case StatType.BestLandingStreak:
+                        text.color = Color.yellow;
+                        break;
+                    case StatType.NoHit:
+                        text.color = noHit ? Color.green : Color.red;
+                        break;
+                    case StatType.NoDeath:
+                        text.color = noDeath ? Color.green : Color.red;
+                        break;
+                    case StatType.NoItems:
+                        text.color = noItems ? Color.green : Color.red;
+                        break;
+                    case StatType.OnlyPerfectLanding:
+                        text.color = onlyPerfectLanding ? Color.green : Color.red;
+                        break;
+                    case StatType.OnlySRanks:
+                        text.color = onlySRanks ? Color.green : Color.red;
+                        break;
+                }
+            }
 
             _statTexts[stat] = text;
             // Add spacing for the next stat depending on the font size
@@ -267,12 +343,26 @@ public class InGameStats : MonoBehaviour {
     /// It updates the stat texts with the current run values.
     /// </summary>
     private void Update() {
-        if (noHit && !GetDamageTaken())
+        if (noDeath && !GetNoDeath()) {
+            noDeath = false;
+            _statTexts[StatType.NoDeath].color = Color.red;
+        }
+        if (noItems && !GetNoItems()) {
+            noItems = false;
+            _statTexts[StatType.NoItems].color = Color.red;
+        }
+        if (noHit && !GetDamageTaken()) {
             noHit = false;
-        if (onlyPerfectLanding && !GetOnlyPerfectLanding())
+            _statTexts[StatType.NoHit].color = Color.red;
+        }
+        if (onlyPerfectLanding && !GetOnlyPerfectLanding()) {
             onlyPerfectLanding = false;
-        if (onlySRanks && !GetOnlySRank())
+            _statTexts[StatType.OnlyPerfectLanding].color = Color.red;
+        }
+        if (onlySRanks && !GetOnlySRank()) {
             onlySRanks = false;
+            _statTexts[StatType.OnlySRanks].color = Color.red;
+        }
 
         // Update the stat texts with the current values
         foreach (StatType stat in enabledStats)
@@ -302,33 +392,6 @@ public class InGameStats : MonoBehaviour {
     /// <example>0.5f will be converted to "50.00%"</example>
     /// <returns>The formatted string representation of the percentile value.</returns>
     private static string Percentile(float percentile) => (percentile * 100).ToString("F2") + "%";
-
-    /// <summary>
-    /// Checks if the current run has taken damage.
-    /// This is done by checking the number of damage taken in the current run stats.
-    /// </summary>
-    /// <returns></returns>
-    private static bool GetDamageTaken() {
-        return (
-            !HasteStats.TryGetRunStat(HasteStatType.STAT_DAMAGE_TAKEN, out int damageTakenCount) ||
-            damageTakenCount == 0
-        );
-    }
-
-    /// <summary>
-    /// Checks if the current run has only perfect landings.
-    /// This is done by checking the number of landings in the current run and comparing it to the number of perfect landings.
-    /// </summary>
-    /// <returns></returns>
-    private static bool GetOnlyPerfectLanding() {
-        return (
-            !HasteStats.TryGetRunStat(HasteStatType.STAT_TOTAL_LANDINGS, out int totalLandingCount) ||
-            (
-                HasteStats.TryGetRunStat(HasteStatType.STAT_PERFECT_LANDINGS, out int perfectLandingCount) &&
-                perfectLandingCount >= totalLandingCount
-            )
-        );
-    }
 
     /// <summary>
     /// Gets the total distance travelled in the current run.
@@ -393,6 +456,51 @@ public class InGameStats : MonoBehaviour {
     }
 
     /// <summary>
+    /// Checks if the current run has no death.
+    /// This is done by checking the number of death in the current run handler stats collector.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetNoDeath() {
+        return RunHandler.statsCollector.Deaths.Count == 0;
+    }
+
+    /// <summary>
+    /// Checks if the current run has no items.
+    /// This is done by checking the number of items in the current run handler stats collector.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetNoItems() {
+        return RunHandler.statsCollector.Items.Count == 0;
+    }
+
+    /// <summary>
+    /// Checks if the current run has taken damage.
+    /// This is done by checking the number of damage taken in the current run stats.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetDamageTaken() {
+        return (
+            !HasteStats.TryGetRunStat(HasteStatType.STAT_DAMAGE_TAKEN, out int damageTakenCount) ||
+            damageTakenCount == 0
+        );
+    }
+
+    /// <summary>
+    /// Checks if the current run has only perfect landings.
+    /// This is done by checking the number of landings in the current run and comparing it to the number of perfect landings.
+    /// </summary>
+    /// <returns></returns>
+    private static bool GetOnlyPerfectLanding() {
+        return (
+            !HasteStats.TryGetRunStat(HasteStatType.STAT_TOTAL_LANDINGS, out int totalLandingCount) ||
+            (
+                HasteStats.TryGetRunStat(HasteStatType.STAT_PERFECT_LANDINGS, out int perfectLandingCount) &&
+                perfectLandingCount >= totalLandingCount
+            )
+        );
+    }
+
+    /// <summary>
     /// Checks if the current run has only S ranks.
     /// This is done by checking the number of ranks not equal to S in the current run stats.
     /// </summary>
@@ -427,6 +535,7 @@ public class InGameStats : MonoBehaviour {
         return stat switch {
             StatType.PerfectLandingStreak => perfectLandingStreak.ToString() + (strictPerfectLanding ? " (Strict)" : ""),
             StatType.BestLandingStreak => bestPerfectLandingStreak.ToString(),
+            StatType.AverageLandingScore => Percentile(averageLandingScore),
             StatType.DistanceTravelled => GetTotalDistance().ToString("F1"),
             StatType.GroundDistanceTravelled => GetGroundDistance().ToString("F1"),
             StatType.AirDistanceTravelled => GetAirDistance().ToString("F1"),
@@ -439,8 +548,8 @@ public class InGameStats : MonoBehaviour {
             StatType.Shard => (RunHandler.RunData.shardID + 1).ToString(),
             StatType.Level => (RunHandler.RunData.currentLevel + 1).ToString() + "/" + RunHandler.RunData.MaxLevels.ToString(),
             StatType.Seed => RunHandler.RunData.currentSeed.ToString(),
-            StatType.NoDeath => RunHandler.statsCollector.Deaths.Count != 0 ? "No" : "Yes",
-            StatType.NoItems => RunHandler.statsCollector.Items.Count != 0 ? "No" : "Yes",
+            StatType.NoDeath => noDeath ? "Yes" : "No",
+            StatType.NoItems => noItems ? "Yes" : "No",
             StatType.NoHit => noHit ? "Yes" : "No",
             StatType.OnlyPerfectLanding => onlyPerfectLanding ? "Yes" : "No",
             StatType.OnlySRanks => onlySRanks ? "Yes" : "No",
