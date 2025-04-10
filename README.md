@@ -2,6 +2,13 @@
 
 ## Changelog
 
+### 1.6
+
+Added Average Landing Score tracker.
+Added optional text colorizing.
+Added optional game font matching text.
+Reorganized Settings tab.
+
 ### 1.5
 
 Added a second apply button in the settings tab.
@@ -69,6 +76,7 @@ Opt-out statistics you don't care about.
 [list]
     [*]Perfect Landing Streak (Standard or Strict Mode => Whether item landing saves are counted or not)
     [*]Best Perfect Landing Streak
+    [*]Average Landing Score
     [*]Distance Travelled
     [*]Ground Distance Travelled
     [*]Air Distance Travelled
@@ -122,6 +130,7 @@ Opt-out statistics you don't care about.
 - Perfect Landing Streak
   -# Standard or Strict Mode => Whether item landing saves are counted or not
 - Best Perfect Landing Streak
+- Average Landing Score
 - Distance Travelled
 - Ground Distance Travelled
 - Air Distance Travelled
