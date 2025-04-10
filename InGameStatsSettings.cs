@@ -192,12 +192,12 @@ public class PerfectLandingStreakSetting : EnumSetting<PerfectLandingStreakType>
 public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
     public override LocalizedString OffString { get; } = new UnlocalizedString("Hidden");
     public override LocalizedString OnString { get; } = new UnlocalizedString("Shown");
-    public override void ApplyValue() => Debug.Log($"Enable {InGameStats.statDisplayNames[StatType]}: {Value}");
+    public override void ApplyValue() => Debug.Log($"Enable {InGameStatsUtils.statDisplayNames[StatType]}: {Value}");
     protected override bool GetDefaultValue() => true;
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
     protected abstract StatType StatType { get; }
-    public LocalizedString GetDisplayName() => new UnlocalizedString(InGameStats.statDisplayNames[StatType]);
+    public LocalizedString GetDisplayName() => new UnlocalizedString(InGameStatsUtils.statDisplayNames[StatType]);
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
