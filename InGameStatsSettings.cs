@@ -51,26 +51,6 @@ public class FontSizeSetting : IntSetting, IExposedSetting {
     }
 }
 
-public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Off");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("On");
-    public override void ApplyValue() => Debug.Log($"Enable {InGameStats.statDisplayNames[StatType]}: {Value}");
-    protected override bool GetDefaultValue() => true;
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-
-    protected abstract StatType StatType { get; }
-    public LocalizedString GetDisplayName() => new UnlocalizedString(InGameStats.statDisplayNames[StatType]);
-
-    public override void Load(ISettingsSaveLoad loader) {
-        base.Load(loader);
-        InGameStats.Instance.enabledStats.Remove(StatType);
-        if (Value)
-            InGameStats.Instance.enabledStats.Add(StatType);
-        else
-            InGameStats.Instance.CreateStatUI();
-    }
-}
-
 [HasteSetting]
 public class ApplySettings : ButtonSetting, IExposedSetting {
     public override void OnClicked() {
@@ -78,11 +58,28 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
         InGameStats.Instance.yBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<YBaseOffsetSetting>().Value;
         InGameStats.Instance.xBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<XBaseOffsetSetting>().Value;
         InGameStats.Instance.fontSize = GameHandler.Instance.SettingsHandler.GetSetting<FontSizeSetting>().Value;
+        InGameStats.Instance.colors = GameHandler.Instance.SettingsHandler.GetSetting<FontColorSetting>().Value;
+        InGameStats.Instance.font = GameHandler.Instance.SettingsHandler.GetSetting<CustomFontSetting>().Value;
+
         InGameStats.Instance.enabledStats.Clear();
-        if (GameHandler.Instance.SettingsHandler.GetSetting<PerfectLandingStreakSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+        switch (GameHandler.Instance.SettingsHandler.GetSetting<PerfectLandingStreakSetting>().Value) {
+            case PerfectLandingStreakType.None:
+                InGameStats.Instance.strictPerfectLanding = false;
+                break;
+            case PerfectLandingStreakType.Standard:
+                InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+                InGameStats.Instance.strictPerfectLanding = false;
+                break;
+            case PerfectLandingStreakType.Strict:
+                InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+                InGameStats.Instance.strictPerfectLanding = true;
+                break;
+        }
+
         if (GameHandler.Instance.SettingsHandler.GetSetting<BestLandingStreakSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.BestLandingStreak);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<AverageLandingScoreSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.AverageLandingScore);
         if (GameHandler.Instance.SettingsHandler.GetSetting<DistanceTravelledSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.DistanceTravelled);
         if (GameHandler.Instance.SettingsHandler.GetSetting<GroundDistanceTravelledSetting>().Value)
@@ -117,7 +114,6 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
             InGameStats.Instance.enabledStats.Add(StatType.OnlyPerfectLanding);
         if (GameHandler.Instance.SettingsHandler.GetSetting<OnlySRanksSetting>().Value)
             InGameStats.Instance.enabledStats.Add(StatType.OnlySRanks);
-        InGameStats.Instance.strictPerfectLanding = GameHandler.Instance.SettingsHandler.GetSetting<StrictPerfectLandingSetting>().Value;
         InGameStats.Instance.CreateStatUI();
     }
 
@@ -127,13 +123,100 @@ public class ApplySettings : ButtonSetting, IExposedSetting {
 }
 
 [HasteSetting]
-public class PerfectLandingStreakSetting : EnableStatSetting {
-    protected override StatType StatType => StatType.PerfectLandingStreak;
+public class FontColorSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("Uncolorized");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("Colorized");
+    public override void ApplyValue() => Debug.Log($"FontColor: {Value}");
+    protected override bool GetDefaultValue() => true;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Colorized Stats");
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.colors = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+}
+
+[HasteSetting]
+public class CustomFontSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("Default Font");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("Game Font");
+    public override void ApplyValue() => Debug.Log($"CustomFont: {Value}");
+    protected override bool GetDefaultValue() => true;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Custom Font");
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.font = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+}
+
+[HasteSetting]
+public class PerfectLandingStreakSetting : EnumSetting<PerfectLandingStreakType>, IExposedSetting {
+    public override void ApplyValue() => Debug.Log($"PerfectLandingStreak: {Value}");
+    protected override PerfectLandingStreakType GetDefaultValue() => PerfectLandingStreakType.Standard;
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Perfect Landing Streak Mode");
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+
+    public override List<LocalizedString> GetLocalizedChoices() {
+        return new List<LocalizedString> {
+            new UnlocalizedString("None"),
+            new UnlocalizedString("Standard"),
+            new UnlocalizedString("Strict")
+        };
+    }
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.enabledStats.Remove(StatType.PerfectLandingStreak);
+        switch (Value) {
+            case PerfectLandingStreakType.None:
+                InGameStats.Instance.strictPerfectLanding = false;
+                break;
+            case PerfectLandingStreakType.Standard:
+                InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+                InGameStats.Instance.strictPerfectLanding = false;
+                break;
+            case PerfectLandingStreakType.Strict:
+                InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+                InGameStats.Instance.strictPerfectLanding = true;
+                break;
+        }
+        InGameStats.Instance.CreateStatUI();
+    }
+}
+
+public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("Hidden");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("Shown");
+    public override void ApplyValue() => Debug.Log($"Enable {InGameStats.statDisplayNames[StatType]}: {Value}");
+    protected override bool GetDefaultValue() => true;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+
+    protected abstract StatType StatType { get; }
+    public LocalizedString GetDisplayName() => new UnlocalizedString(InGameStats.statDisplayNames[StatType]);
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.enabledStats.Remove(StatType);
+        if (Value)
+            InGameStats.Instance.enabledStats.Add(StatType);
+        else
+            InGameStats.Instance.CreateStatUI();
+    }
 }
 
 [HasteSetting]
 public class BestLandingStreakSetting : EnableStatSetting {
     protected override StatType StatType => StatType.BestLandingStreak;
+}
+
+[HasteSetting]
+public class AverageLandingScoreSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.AverageLandingScore;
 }
 
 [HasteSetting]
@@ -219,21 +302,6 @@ public class OnlyPerfectLandingSetting : EnableStatSetting {
 [HasteSetting]
 public class OnlySRanksSetting : EnableStatSetting {
     protected override StatType StatType => StatType.OnlySRanks;
-}
-
-[HasteSetting]
-public class StrictPerfectLandingSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Off");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("On");
-    public override void ApplyValue() => Debug.Log($"Strict Perfect Landing: {Value}");
-    protected override bool GetDefaultValue() => false;
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Strict Perfect Landing Mode (no landing saves)");
-
-    public override void Load(ISettingsSaveLoad loader) {
-        base.Load(loader);
-        InGameStats.Instance.strictPerfectLanding = Value;
-    }
 }
 
 [HasteSetting]
