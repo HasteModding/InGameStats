@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 1.5
+
+Added a second apply button in the settings tab.
+Reason: easier stats positioning.
+
 ### 1.4
 
 Added separate Ground and Air Distance Travelled features.

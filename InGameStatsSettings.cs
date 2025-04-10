@@ -72,6 +72,61 @@ public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
 }
 
 [HasteSetting]
+public class ApplySettings : ButtonSetting, IExposedSetting {
+    public override void OnClicked() {
+        Debug.Log("ApplySettings clicked");
+        InGameStats.Instance.yBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<YBaseOffsetSetting>().Value;
+        InGameStats.Instance.xBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<XBaseOffsetSetting>().Value;
+        InGameStats.Instance.fontSize = GameHandler.Instance.SettingsHandler.GetSetting<FontSizeSetting>().Value;
+        InGameStats.Instance.enabledStats.Clear();
+        if (GameHandler.Instance.SettingsHandler.GetSetting<PerfectLandingStreakSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<BestLandingStreakSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.BestLandingStreak);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<DistanceTravelledSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.DistanceTravelled);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<GroundDistanceTravelledSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.GroundDistanceTravelled);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<AirDistanceTravelledSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.AirDistanceTravelled);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<LuckSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.Luck);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<BoostSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.Boost);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<HealthSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.Health);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<MaxHealthSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.MaxHealth);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<MaxEnergySetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.MaxEnergy);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<PickupRangeSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.PickupRange);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<ShardSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.Shard);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<LevelSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.Level);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<SeedSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.Seed);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<NoHitSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.NoHit);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<NoDeathSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.NoDeath);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<NoItemsSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.NoItems);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<OnlyPerfectLandingSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.OnlyPerfectLanding);
+        if (GameHandler.Instance.SettingsHandler.GetSetting<OnlySRanksSetting>().Value)
+            InGameStats.Instance.enabledStats.Add(StatType.OnlySRanks);
+        InGameStats.Instance.strictPerfectLanding = GameHandler.Instance.SettingsHandler.GetSetting<StrictPerfectLandingSetting>().Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Apply Settings");
+    public override string GetButtonText() => "Apply Settings";
+}
+
+[HasteSetting]
 public class PerfectLandingStreakSetting : EnableStatSetting {
     protected override StatType StatType => StatType.PerfectLandingStreak;
 }
@@ -182,56 +237,4 @@ public class StrictPerfectLandingSetting : BoolSetting, IExposedSetting {
 }
 
 [HasteSetting]
-public class ApplySettings : ButtonSetting, IExposedSetting {
-    public override void OnClicked() {
-        Debug.Log("ApplySettings clicked");
-        InGameStats.Instance.yBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<YBaseOffsetSetting>().Value;
-        InGameStats.Instance.xBaseOffset = GameHandler.Instance.SettingsHandler.GetSetting<XBaseOffsetSetting>().Value;
-        InGameStats.Instance.fontSize = GameHandler.Instance.SettingsHandler.GetSetting<FontSizeSetting>().Value;
-        InGameStats.Instance.enabledStats.Clear();
-        if (GameHandler.Instance.SettingsHandler.GetSetting<PerfectLandingStreakSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<BestLandingStreakSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.BestLandingStreak);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<DistanceTravelledSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.DistanceTravelled);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<GroundDistanceTravelledSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.GroundDistanceTravelled);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<AirDistanceTravelledSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.AirDistanceTravelled);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<LuckSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Luck);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<BoostSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Boost);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<HealthSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Health);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<MaxHealthSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.MaxHealth);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<MaxEnergySetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.MaxEnergy);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<PickupRangeSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.PickupRange);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<ShardSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Shard);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<LevelSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Level);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<SeedSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.Seed);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<NoHitSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.NoHit);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<NoDeathSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.NoDeath);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<NoItemsSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.NoItems);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<OnlyPerfectLandingSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.OnlyPerfectLanding);
-        if (GameHandler.Instance.SettingsHandler.GetSetting<OnlySRanksSetting>().Value)
-            InGameStats.Instance.enabledStats.Add(StatType.OnlySRanks);
-        InGameStats.Instance.strictPerfectLanding = GameHandler.Instance.SettingsHandler.GetSetting<StrictPerfectLandingSetting>().Value;
-        InGameStats.Instance.CreateStatUI();
-    }
-
-    public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Apply Settings");
-    public override string GetButtonText() => "Apply Settings";
-}
+public class BottomApplySettings : ApplySettings {}
