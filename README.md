@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.6b
+
+Source code reorganization
+
 ### 1.6
 
 Added Average Landing Score tracker.
@@ -117,7 +121,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3457771863
 
 # Description
 
-Display your current stats in-game, while you run, without pausing your run!  
+**Display your current stats in-game, while you run, without pausing your run**!  
 Move around the UI.  
 Opt-out statistics you don't care about.  
 **Fully customizable in Settings InGameStats tab**.  
