@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 1.4
+
+Added separate Ground and Air Distance Travelled features.
+Changed the way distance is computed.
+
 ### 1.3
 
 Added Perfect Landing Streak Strict Mode (landings saved by aren't counted as perfect streak)
@@ -59,7 +64,9 @@ Opt-out statistics you don't care about.
 [list]
     [*]Perfect Landing Streak (Standard or Strict Mode => Whether item landing saves are counted or not)
     [*]Best Perfect Landing Streak
-    [*]Distance Traveled
+    [*]Distance Travelled
+    [*]Ground Distance Travelled
+    [*]Air Distance Travelled
     [*]Luck
     [*]Boost
     [*]Health
@@ -110,7 +117,9 @@ Opt-out statistics you don't care about.
 - Perfect Landing Streak
   -# Standard or Strict Mode => Whether item landing saves are counted or not
 - Best Perfect Landing Streak
-- Distance Traveled
+- Distance Travelled
+- Ground Distance Travelled
+- Air Distance Travelled
 - Luck
 - Boost
 - Health
