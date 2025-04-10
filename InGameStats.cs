@@ -73,6 +73,8 @@ public class InGameStats : MonoBehaviour {
         StatType.PerfectLandingStreak,
         StatType.BestLandingStreak,
         StatType.DistanceTravelled,
+        StatType.GroundDistanceTravelled,
+        StatType.AirDistanceTravelled,
         StatType.Luck,
         StatType.Boost,
         StatType.Health,
@@ -107,7 +109,9 @@ public class InGameStats : MonoBehaviour {
     public static readonly Dictionary<StatType, string> statDisplayNames = new() {
         { StatType.PerfectLandingStreak, "Perfect Streak" },
         { StatType.BestLandingStreak, "Best Streak" },
-        { StatType.DistanceTravelled, "Distance Travelled" },
+        { StatType.DistanceTravelled, "Distance" },
+        { StatType.GroundDistanceTravelled, "Ground Distance" },
+        { StatType.AirDistanceTravelled, "Air Distance" },
         { StatType.Luck, "Luck" },
         { StatType.Boost, "Boost" },
         { StatType.Health, "Health" },
@@ -263,11 +267,11 @@ public class InGameStats : MonoBehaviour {
     /// It updates the stat texts with the current run values.
     /// </summary>
     private void Update() {
-        if (!GetDamageTaken())
+        if (noHit && !GetDamageTaken())
             noHit = false;
-        if (!GetOnlyPerfectLanding())
+        if (onlyPerfectLanding && !GetOnlyPerfectLanding())
             onlyPerfectLanding = false;
-        if (!GetOnlySRank())
+        if (onlySRanks && !GetOnlySRank())
             onlySRanks = false;
 
         // Update the stat texts with the current values
@@ -327,6 +331,68 @@ public class InGameStats : MonoBehaviour {
     }
 
     /// <summary>
+    /// Gets the total distance travelled in the current run.
+    /// This is done by checking the total distance in the current run stats.
+    /// </summary>
+    private static float GetTotalDistance() {
+        try {
+            const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+            FieldInfo? groundDistanceField = typeof(HasteStats).GetField("m_RUN_DistanceTravelled_Ground", bindingFlags);
+            FieldInfo? airDistanceField = typeof(HasteStats).GetField("m_RUN_DistanceTravelled_Air", bindingFlags);
+            if (groundDistanceField == null || airDistanceField == null)
+                throw new MissingMemberException("Fields 'm_RUN_DistanceTravelled_Ground' or 'm_RUN_DistanceTravelled_Air' not found on HasteStats.");
+            object? groundValue = groundDistanceField.GetValue(null);
+            object? airValue = airDistanceField.GetValue(null);
+            if (groundValue is not float groundDistanceValue || airValue is not float airDistanceValue)
+                throw new InvalidCastException("Fields 'm_RUN_DistanceTravelled_Ground' or 'm_RUN_DistanceTravelled_Air' are not of type float.");
+            return groundDistanceValue + airDistanceValue;
+        } catch (Exception ex) {
+            Debug.LogError($"Error getting total distance: {ex.Message}");
+            return HasteStats.TryGetRunStat(HasteStatType.STAT_TOTAL_DISTANCE, out int totalDistance) ? totalDistance * 1000f : 0f;
+        }
+    }
+
+    /// <summary>
+    /// Gets the ground distance travelled in the current run.
+    /// This is done by checking the ground distance in the current run stats.
+    /// </summary>
+    private static float GetGroundDistance() {
+        try {
+            const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+            FieldInfo? groundDistanceField = typeof(HasteStats).GetField("m_RUN_DistanceTravelled_Ground", bindingFlags);
+            if (groundDistanceField == null)
+                throw new MissingMemberException("Field 'm_RUN_DistanceTravelled_Ground' not found on HasteStats.");
+            object? value = groundDistanceField.GetValue(null);
+            if (value is not float groundDistanceValue)
+                throw new InvalidCastException("Field 'm_RUN_DistanceTravelled_Ground' is not of type float.");
+            return groundDistanceValue;
+        } catch (Exception ex) {
+            Debug.LogError($"Error getting ground distance: {ex.Message}");
+            return HasteStats.TryGetRunStat(HasteStatType.STAT_DISTANCE_GROUND, out int groundDistance) ? groundDistance * 1000f : 0f;
+        }
+    }
+
+    /// <summary>
+    /// Gets the air distance travelled in the current run.
+    /// This is done by checking the air distance in the current run stats.
+    /// </summary>
+    private static float GetAirDistance() {
+        try {
+            const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+            FieldInfo? airDistanceField = typeof(HasteStats).GetField("m_RUN_DistanceTravelled_Air", bindingFlags);
+            if (airDistanceField == null)
+                throw new MissingMemberException("Field 'm_RUN_DistanceTravelled_Air' not found on HasteStats.");
+            object? value = airDistanceField.GetValue(null);
+            if (value is not float airDistanceValue)
+                throw new InvalidCastException("Field 'm_RUN_DistanceTravelled_Air' is not of type float.");
+            return airDistanceValue;
+        } catch (Exception ex) {
+            Debug.LogError($"Error getting air distance: {ex.Message}");
+            return HasteStats.TryGetRunStat(HasteStatType.STAT_DISTANCE_AIR, out int airDistance) ? airDistance * 1000f : 0f;
+        }
+    }
+
+    /// <summary>
     /// Checks if the current run has only S ranks.
     /// This is done by checking the number of ranks not equal to S in the current run stats.
     /// </summary>
@@ -361,7 +427,9 @@ public class InGameStats : MonoBehaviour {
         return stat switch {
             StatType.PerfectLandingStreak => perfectLandingStreak.ToString() + (strictPerfectLanding ? " (Strict)" : ""),
             StatType.BestLandingStreak => bestPerfectLandingStreak.ToString(),
-            StatType.DistanceTravelled => player.data.distanceTraveled.ToString("F1"),
+            StatType.DistanceTravelled => GetTotalDistance().ToString("F1"),
+            StatType.GroundDistanceTravelled => GetGroundDistance().ToString("F1"),
+            StatType.AirDistanceTravelled => GetAirDistance().ToString("F1"),
             StatType.Luck => Percentile(ComputeStatValue(player.stats.luck)),
             StatType.Boost => Percentile(player.character.data.GetBoost()),
             StatType.Health => player.data.currentHealth.ToString("F1"),
