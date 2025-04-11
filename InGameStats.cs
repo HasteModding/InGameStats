@@ -87,12 +87,13 @@ public class InGameStats : MonoBehaviour {
         if (landingType == LandingType.Perfect) {
             perfectLandingStreak++;
             if (perfectLandingStreak > bestPerfectLandingStreak) {
-                if (colors)
+                if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
                     _statTexts[StatType.PerfectLandingStreak].color = Color.yellow;
                 bestPerfectLandingStreak = perfectLandingStreak;
             }
         } else {
-            _statTexts[StatType.PerfectLandingStreak].color = Color.white;
+            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
+                _statTexts[StatType.PerfectLandingStreak].color = Color.white;
             perfectLandingStreak = 0;
         }
     }
