@@ -166,6 +166,7 @@ public static class InGameStatsUtils {
         { StatType.MaxHealth, "Max Health" },
         { StatType.MaxEnergy, "Max Energy" },
         { StatType.PickupRange, "Pickup Range" },
+        { StatType.LevelSpeed, "Collapse Speed" },
         { StatType.Shard, "Shard" },
         { StatType.Level, "Level" },
         { StatType.Seed, "Seed" },

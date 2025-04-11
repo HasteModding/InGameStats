@@ -235,6 +235,11 @@ public class PickupRangeSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class LevelSpeedSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.LevelSpeed;
+}
+
+[HasteSetting]
 public class ShardSetting : EnableStatSetting {
     protected override StatType StatType => StatType.Shard;
 }
