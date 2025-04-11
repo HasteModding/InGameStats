@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 1.9
+
+Fix Level stat (doesn't overflow anymore, and displays when in boss)
+Shard and Level stats improved in endless.
+
 ### 1.8
 
 Added Collapse Speed (black void spreading speed)

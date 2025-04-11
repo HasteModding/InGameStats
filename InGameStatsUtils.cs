@@ -84,6 +84,23 @@ public static class InGameStatsUtils {
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    public static string GetLevelStats() {
+        int level = RunHandler.RunData.currentLevel;
+        if (RunHandler.isEndless) {
+            return $"{level} (Endless)";
+        }
+
+        int maxLevels = RunHandler.RunData.MaxLevels;
+        if (level <= maxLevels) {
+            return $"{level}/{maxLevels}";
+        }
+
+        return $"{level} (Boss Fight)";
+    }
+
+    /// <summary>
     /// Checks if the current run has no death.
     /// This is done by checking the number of death in the current run handler stats collector.
     /// </summary>
