@@ -83,13 +83,23 @@ public class InGameStats : MonoBehaviour {
     private Canvas? _canvas;
     private Dictionary<StatType, TextMeshProUGUI> _statTexts = new();
 
+    private void HandleLanding(LandingType landingType) {
+        if (landingType == LandingType.Perfect) {
+            perfectLandingStreak++;
+            if (perfectLandingStreak > bestPerfectLandingStreak) {
+                if (colors)
+                    _statTexts[StatType.PerfectLandingStreak].color = Color.yellow;
+                bestPerfectLandingStreak = perfectLandingStreak;
+            }
+        } else {
+            _statTexts[StatType.PerfectLandingStreak].color = Color.white;
+            perfectLandingStreak = 0;
+        }
+    }
+
     private void OnLanding(LandingType landingType, bool saved) {
         if (strictPerfectLanding) return;
-        if (landingType == LandingType.Perfect) {
-            if (++perfectLandingStreak > bestPerfectLandingStreak)
-                bestPerfectLandingStreak = perfectLandingStreak;
-        }
-        else perfectLandingStreak = 0;
+        HandleLanding(landingType);
     }
 
     private void OnLanding(object landing) {
@@ -104,14 +114,11 @@ public class InGameStats : MonoBehaviour {
             averageLandingScore += (landingScore - averageLandingScore) / _landingCount;
             // Update the perfect landing streaks if in strict mode
             if (!strictPerfectLanding) return;
-            bool isPerfect = landingScore > 0.95f;
-            if (isPerfect) {
-                perfectLandingStreak++;
-                if (perfectLandingStreak > bestPerfectLandingStreak)
-                    bestPerfectLandingStreak = perfectLandingStreak;
-            } else {
-                perfectLandingStreak = 0;
-            }
+            LandingType landingType = LandingType.Bad;
+            if (landingScore >= 0.7f) landingType = LandingType.Ok;
+            if (landingScore >= 0.9f) landingType = LandingType.Good;
+            if (landingScore >= 0.95f) landingType = LandingType.Perfect;
+            HandleLanding(landingType);
         }
     }
 
@@ -122,10 +129,20 @@ public class InGameStats : MonoBehaviour {
         averageLandingScore = 0f;
         _landingCount = 0;
         noHit = true;
+        if (colors)
+            _statTexts[StatType.NoHit].color = Color.green;
         noDeath = true;
+        if (colors)
+            _statTexts[StatType.NoDeath].color = Color.green;
         noItems = true;
+        if (colors)
+            _statTexts[StatType.NoItems].color = Color.green;
         onlyPerfectLanding = true;
+        if (colors)
+            _statTexts[StatType.OnlyPerfectLanding].color = Color.green;
         onlySRanks = true;
+        if (colors)
+            _statTexts[StatType.OnlySRanks].color = Color.green;
     }
 
     private void OnNewLevel() {
@@ -134,15 +151,16 @@ public class InGameStats : MonoBehaviour {
         if (player == null) return;
 
         PlayerMovement movement = player.character.refs.movement;
-        movement.landAction = (Action<LandingType, bool>)Delegate.Remove(movement.landAction, new Action<LandingType, bool>(OnLanding));
-        movement.landAction = (Action<LandingType, bool>)Delegate.Combine(movement.landAction, new Action<LandingType, bool>(OnLanding));
+        movement.landAction -= OnLanding;
+        movement.landAction += OnLanding;
     }
 
     private void Awake() {
         Instance = this;
-        On.GM_API.OnStartNewRun += (orig) => {OnStartNewRun(); orig();};
-        On.GM_API.OnSpawnedInHub += (orig) => {OnStartNewRun(); orig();};
-        On.GM_API.OnNewLevel += (orig) => {OnNewLevel(); orig();};
+        GM_API.StartNewRun += OnStartNewRun;
+        GM_API.SpawnedInHub += OnStartNewRun;
+        GM_API.NewLevel += OnNewLevel;
+        GM_API.MainMenuPlayButton += CreateStatUI;
         On.PlayerMovement.GetLanding += (orig, self, hit) => {
             object landing = orig(self, hit);
             OnLanding(landing);
@@ -155,32 +173,34 @@ public class InGameStats : MonoBehaviour {
 
         CanvasScaler canvasScaler = GetComponent<CanvasScaler>();
         canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        canvasScaler.referenceResolution = new Vector2(1920, 1080);
-
-        // Create UI elements for each enabled stat
-        CreateStatUI();
+        canvasScaler.referenceResolution = new Vector2(Screen.width, Screen.height);
     }
 
     private void Update() {
         if (noDeath && !InGameStatsUtils.GetNoDeath()) {
             noDeath = false;
-            _statTexts[StatType.NoDeath].color = Color.red;
+            if (colors)
+                _statTexts[StatType.NoDeath].color = Color.red;
         }
         if (noItems && !InGameStatsUtils.GetNoItems()) {
             noItems = false;
-            _statTexts[StatType.NoItems].color = Color.red;
+            if (colors)
+                _statTexts[StatType.NoItems].color = Color.red;
         }
         if (noHit && !InGameStatsUtils.GetDamageTaken()) {
             noHit = false;
-            _statTexts[StatType.NoHit].color = Color.red;
+            if (colors)
+                _statTexts[StatType.NoHit].color = Color.red;
         }
         if (onlyPerfectLanding && !InGameStatsUtils.GetOnlyPerfectLanding()) {
             onlyPerfectLanding = false;
-            _statTexts[StatType.OnlyPerfectLanding].color = Color.red;
+            if (colors)
+                _statTexts[StatType.OnlyPerfectLanding].color = Color.red;
         }
         if (onlySRanks && !InGameStatsUtils.GetOnlySRank()) {
             onlySRanks = false;
-            _statTexts[StatType.OnlySRanks].color = Color.red;
+            if (colors)
+                _statTexts[StatType.OnlySRanks].color = Color.red;
         }
 
         // Update the stat texts with the current values

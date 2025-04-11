@@ -2,9 +2,15 @@
 
 ## Changelog
 
+### 1.7
+
+No more apply button!
+Better action listening subscriptions
+Fixed initial sizing issue
+
 ### 1.6b
 
-Source code reorganization
+Source code reorganization.
 
 ### 1.6
 
@@ -61,17 +67,15 @@ Included Features:
 - Level
 - Seed
 
-
-
 # Steam Mod Description
 
+```
 [h1]Description[/h1]
 
 [b]Display your current stats in-game, while you run, without pausing your run![/b]
 Move around the UI.
 Opt-out statistics you don't care about.
 [b]Fully customizable in Settings InGameStats tab[/b].
-(Don't forget to click the Apply Button)
 
 [h1]Features[/h1]
 
@@ -113,19 +117,19 @@ Opt-out statistics you don't care about.
 [h1]Source Code[/h1]
 
 https://github.com/HasteModding/InGameStats
+```
 
 # Discord Mod Description
 
 ```md
-https://steamcommunity.com/sharedfiles/filedetails/?id=3457771863
-
 # Description
+
+https://steamcommunity.com/sharedfiles/filedetails/?id=3457771863
 
 **Display your current stats in-game, while you run, without pausing your run**!  
 Move around the UI.  
 Opt-out statistics you don't care about.  
 **Fully customizable in Settings InGameStats tab**.  
-(Don't forget to click the Apply Button)
 
 # Features
 
