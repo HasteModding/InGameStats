@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.8
+
+Added Collapse Speed (black void spreading speed)
+
 ### 1.7
 
 No more apply button!
