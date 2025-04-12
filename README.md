@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.10
+
+Add ability to anchor text to the right side of the screen.
+
 ### 1.9
 
 Fix Level stat (doesn't overflow anymore, and displays when in boss)

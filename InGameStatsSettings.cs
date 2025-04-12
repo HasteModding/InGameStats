@@ -62,6 +62,27 @@ public class FontSizeSetting : IntSetting, IExposedSetting {
         InGameStats.Instance.CreateStatUI();
     }
 }
+
+[HasteSetting]
+public class RightSideSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("Left Side");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("Right Side");
+    public override void ApplyValue() {
+        Debug.Log($"RightSide: {Value}");
+        InGameStats.Instance.rightSide = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+    protected override bool GetDefaultValue() => false;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Right Side");
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.rightSide = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+}
+
 [HasteSetting]
 public class FontColorSetting : BoolSetting, IExposedSetting {
     public override LocalizedString OffString { get; } = new UnlocalizedString("Uncolorized");

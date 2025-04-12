@@ -31,6 +31,10 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public int fontSize = 12;
     /// <summary>
+    /// Whether the stats should be displayed on the right or left side of the screen.
+    /// </summary>
+    public bool rightSide = false;
+    /// <summary>
     /// Indicates if only the true perfect landings should be counted.
     /// </summary>
     public bool strictPerfectLanding = false;
@@ -238,12 +242,20 @@ public class InGameStats : MonoBehaviour {
             TextMeshProUGUI text = statObject.AddComponent<TextMeshProUGUI>();
 
             RectTransform rectTransform = text.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(0, 1);
-            rectTransform.anchorMax = new Vector2(0, 1);
-            rectTransform.pivot = new Vector2(0, 1);
-            rectTransform.anchoredPosition = new Vector2(xBaseOffset, -yOffset);
+            if (rightSide) {
+                rectTransform.anchorMin = new Vector2(1, 1);
+                rectTransform.anchorMax = new Vector2(1, 1);
+                rectTransform.pivot = new Vector2(1, 1);
+                rectTransform.anchoredPosition = new Vector2(-xBaseOffset, -yOffset);
+            } else {
+                rectTransform.anchorMin = new Vector2(0, 1);
+                rectTransform.anchorMax = new Vector2(0, 1);
+                rectTransform.pivot = new Vector2(0, 1);
+                rectTransform.anchoredPosition = new Vector2(xBaseOffset, -yOffset);
+            }
             rectTransform.sizeDelta = new Vector2(Screen.width / 3f, fontSize + 5f);
-
+            // Set text alignment based on the side
+            text.alignment = rightSide ? TextAlignmentOptions.Right : TextAlignmentOptions.Left;
             // Set the text properties
             text.fontSize = fontSize;
             text.color = Color.white;
