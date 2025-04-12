@@ -107,6 +107,7 @@ Opt-out statistics you don't care about.
     [*]Max Health
     [*]Max Energy
     [*]Pickup Range
+    [*]Collapse Speed
 [/list]
 
 [h2]Seeds Helpers[/h2]
@@ -161,6 +162,7 @@ Opt-out statistics you don't care about.
 - Max Health
 - Max Energy
 - Pickup Range
+- Collapse Speed
 
 ## Seeds Helpers
 
