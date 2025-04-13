@@ -1,3 +1,5 @@
+using TMPro;
+
 namespace InGameStats;
 
 /// <summary>
@@ -57,4 +59,14 @@ public enum ItemUnlockProgressionMode {
     Percentage,
     RawValue,
     NumberOfItems,
+}
+
+public abstract class Stat {
+    public abstract string DefaultName { get; }
+    public abstract bool Enabled();
+    public abstract string UpdateContent(TextMeshProUGUI text, bool colorized, bool isRightAligned);
+    public virtual void OnStartNewRun() {} // Called when a new run starts
+    public virtual void OnNewLevel() {} // Called when a new level starts
+    public virtual void OnSpawnedInHub() {} // Called when the player spawns in the hub
+    public virtual void OnMainMenuPlayButton() {} // Called when the player presses the play button in the main menu
 }
