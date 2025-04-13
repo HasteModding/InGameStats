@@ -73,33 +73,33 @@ public class InGameStats : MonoBehaviour {
         StatType.OnlySRanks,
     };
 
-    private int perfectLandingStreak = 0;
-    private float averageLandingScore = 0f;
+    private int _perfectLandingStreak = 0;
+    private float _averageLandingScore = 0f;
     private int _landingCount = 0;
-    private int bestPerfectLandingStreak = 0;
+    private int _bestPerfectLandingStreak = 0;
 
-    private bool noHit = true;
-    private bool noDeath = true;
-    private bool noItems = true;
-    private bool onlyPerfectLanding = true;
-    private bool onlySRanks = true;
-    private TMP_FontAsset fontAsset = null!;
+    private bool _noHit = true;
+    private bool _noDeath = true;
+    private bool _noItems = true;
+    private bool _onlyPerfectLanding = true;
+    private bool _onlySRanks = true;
+    private TMP_FontAsset _fontAsset = null!;
 
     private Canvas? _canvas;
-    private Dictionary<StatType, TextMeshProUGUI> _statTexts = new();
+    private readonly Dictionary<StatType, TextMeshProUGUI> _statTexts = new();
 
     private void HandleLanding(LandingType landingType) {
         if (landingType == LandingType.Perfect) {
-            perfectLandingStreak++;
-            if (perfectLandingStreak > bestPerfectLandingStreak) {
-                if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
-                    _statTexts[StatType.PerfectLandingStreak].color = Color.yellow;
-                bestPerfectLandingStreak = perfectLandingStreak;
+            _perfectLandingStreak++;
+            if (_perfectLandingStreak > _bestPerfectLandingStreak) {
+                if (colors && _statTexts.TryGetValue(StatType.PerfectLandingStreak, out TextMeshProUGUI? text))
+                    text.color = Color.yellow;
+                _bestPerfectLandingStreak = _perfectLandingStreak;
             }
         } else {
-            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
-                _statTexts[StatType.PerfectLandingStreak].color = Color.white;
-            perfectLandingStreak = 0;
+            if (colors && _statTexts.TryGetValue(StatType.PerfectLandingStreak, out TextMeshProUGUI? text))
+                text.color = Color.white;
+            _perfectLandingStreak = 0;
         }
     }
 
@@ -117,7 +117,7 @@ public class InGameStats : MonoBehaviour {
             // Update the average landing score and count
             float landingScore = (float) landingScoreField.GetValue(landing);
             _landingCount++;
-            averageLandingScore += (landingScore - averageLandingScore) / _landingCount;
+            _averageLandingScore += (landingScore - _averageLandingScore) / _landingCount;
             // Update the perfect landing streaks if in strict mode
             if (!strictPerfectLanding) return;
             LandingType landingType = LandingType.Bad;
@@ -130,25 +130,25 @@ public class InGameStats : MonoBehaviour {
 
     private void OnStartNewRun() {
         // Reset the perfect landing streaks when a new run starts
-        perfectLandingStreak = 0;
-        bestPerfectLandingStreak = 0;
-        averageLandingScore = 0f;
+        _perfectLandingStreak = 0;
+        _bestPerfectLandingStreak = 0;
+        _averageLandingScore = 0f;
         _landingCount = 0;
-        noHit = true;
-        if (colors && _statTexts.ContainsKey(StatType.NoHit))
-            _statTexts[StatType.NoHit].color = Color.green;
-        noDeath = true;
-        if (colors && _statTexts.ContainsKey(StatType.NoDeath))
-            _statTexts[StatType.NoDeath].color = Color.green;
-        noItems = true;
-        if (colors && _statTexts.ContainsKey(StatType.NoItems))
-            _statTexts[StatType.NoItems].color = Color.green;
-        onlyPerfectLanding = true;
-        if (colors && _statTexts.ContainsKey(StatType.OnlyPerfectLanding))
-            _statTexts[StatType.OnlyPerfectLanding].color = Color.green;
-        onlySRanks = true;
-        if (colors && _statTexts.ContainsKey(StatType.OnlySRanks))
-            _statTexts[StatType.OnlySRanks].color = Color.green;
+        _noHit = true;
+        if (colors && _statTexts.TryGetValue(StatType.NoHit, out TextMeshProUGUI? text))
+            text.color = Color.green;
+        _noDeath = true;
+        if (colors && _statTexts.TryGetValue(StatType.NoDeath, out TextMeshProUGUI? statText))
+            statText.color = Color.green;
+        _noItems = true;
+        if (colors && _statTexts.TryGetValue(StatType.NoItems, out TextMeshProUGUI? text1))
+            text1.color = Color.green;
+        _onlyPerfectLanding = true;
+        if (colors && _statTexts.TryGetValue(StatType.OnlyPerfectLanding, out TextMeshProUGUI? statText1))
+            statText1.color = Color.green;
+        _onlySRanks = true;
+        if (colors && _statTexts.TryGetValue(StatType.OnlySRanks, out TextMeshProUGUI? text2))
+            text2.color = Color.green;
     }
 
     private void OnNewLevel() {
@@ -183,30 +183,30 @@ public class InGameStats : MonoBehaviour {
     }
 
     private void Update() {
-        if (noDeath && !InGameStatsUtils.GetNoDeath()) {
-            noDeath = false;
-            if (colors && _statTexts.ContainsKey(StatType.NoDeath))
-                _statTexts[StatType.NoDeath].color = Color.red;
+        if (_noDeath && !InGameStatsUtils.GetNoDeath()) {
+            _noDeath = false;
+            if (colors && _statTexts.TryGetValue(StatType.NoDeath, out TextMeshProUGUI? text))
+                text.color = Color.red;
         }
-        if (noItems && !InGameStatsUtils.GetNoItems()) {
-            noItems = false;
-            if (colors && _statTexts.ContainsKey(StatType.NoItems))
-                _statTexts[StatType.NoItems].color = Color.red;
+        if (_noItems && !InGameStatsUtils.GetNoItems()) {
+            _noItems = false;
+            if (colors && _statTexts.TryGetValue(StatType.NoItems, out TextMeshProUGUI? text))
+                text.color = Color.red;
         }
-        if (noHit && !InGameStatsUtils.GetDamageTaken()) {
-            noHit = false;
-            if (colors && _statTexts.ContainsKey(StatType.NoHit))
-                _statTexts[StatType.NoHit].color = Color.red;
+        if (_noHit && !InGameStatsUtils.GetDamageTaken()) {
+            _noHit = false;
+            if (colors && _statTexts.TryGetValue(StatType.NoHit, out TextMeshProUGUI? text))
+                text.color = Color.red;
         }
-        if (onlyPerfectLanding && !InGameStatsUtils.GetOnlyPerfectLanding()) {
-            onlyPerfectLanding = false;
-            if (colors && _statTexts.ContainsKey(StatType.OnlyPerfectLanding))
-                _statTexts[StatType.OnlyPerfectLanding].color = Color.red;
+        if (_onlyPerfectLanding && !InGameStatsUtils.GetOnlyPerfectLanding()) {
+            _onlyPerfectLanding = false;
+            if (colors && _statTexts.TryGetValue(StatType.OnlyPerfectLanding, out TextMeshProUGUI? text))
+                text.color = Color.red;
         }
-        if (onlySRanks && !InGameStatsUtils.GetOnlySRank()) {
-            onlySRanks = false;
-            if (colors && _statTexts.ContainsKey(StatType.OnlySRanks))
-                _statTexts[StatType.OnlySRanks].color = Color.red;
+        if (_onlySRanks && !InGameStatsUtils.GetOnlySRank()) {
+            _onlySRanks = false;
+            if (colors && _statTexts.TryGetValue(StatType.OnlySRanks, out TextMeshProUGUI? text))
+                text.color = Color.red;
         }
 
         // Update the stat texts with the current values
@@ -264,29 +264,29 @@ public class InGameStats : MonoBehaviour {
 
             if (font) {
                 // Set the font asset if it is not already set
-                if (fontAsset == null) {
+                if (_fontAsset == null) {
                     TMP_FontAsset[] fonts = Resources.FindObjectsOfTypeAll<TMP_FontAsset>();
                     Debug.Log($"Found {fonts.Length} font assets.");
                     foreach (TMP_FontAsset font in fonts) {
                         Debug.Log($"Font name: {font.name}");
                         if (font.name == "AkzidenzGroteskPro-Bold SDF") {
-                            fontAsset = font;
+                            _fontAsset = font;
                             break;
                         }
                     }
-                    if (fontAsset == null) {
+                    if (_fontAsset == null) {
                         Debug.LogError("Font asset not found. Using default font.");
                     } else {
-                        Debug.Log($"Font asset found: {fontAsset.name}");
+                        Debug.Log($"Font asset found: {_fontAsset.name}");
                     }
                 }
 
                 // Set the font asset to the text component
                 // Check if the font asset is not null before assigning it to the text component
-                if (fontAsset != null) {
-                    text.font = fontAsset;
-                    text.fontSharedMaterial = fontAsset.material;
-                    text.fontSharedMaterial.mainTexture = fontAsset.material.mainTexture;
+                if (_fontAsset != null) {
+                    text.font = _fontAsset;
+                    text.fontSharedMaterial = _fontAsset.material;
+                    text.fontSharedMaterial.mainTexture = _fontAsset.material.mainTexture;
                 }
             }
 
@@ -297,19 +297,19 @@ public class InGameStats : MonoBehaviour {
                         text.color = Color.yellow;
                         break;
                     case StatType.NoHit:
-                        text.color = noHit ? Color.green : Color.red;
+                        text.color = _noHit ? Color.green : Color.red;
                         break;
                     case StatType.NoDeath:
-                        text.color = noDeath ? Color.green : Color.red;
+                        text.color = _noDeath ? Color.green : Color.red;
                         break;
                     case StatType.NoItems:
-                        text.color = noItems ? Color.green : Color.red;
+                        text.color = _noItems ? Color.green : Color.red;
                         break;
                     case StatType.OnlyPerfectLanding:
-                        text.color = onlyPerfectLanding ? Color.green : Color.red;
+                        text.color = _onlyPerfectLanding ? Color.green : Color.red;
                         break;
                     case StatType.OnlySRanks:
-                        text.color = onlySRanks ? Color.green : Color.red;
+                        text.color = _onlySRanks ? Color.green : Color.red;
                         break;
                 }
             }
@@ -328,9 +328,9 @@ public class InGameStats : MonoBehaviour {
     private string GetStatValue(StatType stat) {
         Player? player = Player.localPlayer;
         return stat switch {
-            StatType.PerfectLandingStreak => perfectLandingStreak.ToString() + (strictPerfectLanding ? " (Strict)" : ""),
-            StatType.BestLandingStreak => bestPerfectLandingStreak.ToString(),
-            StatType.AverageLandingScore => InGameStatsUtils.Percentile(averageLandingScore),
+            StatType.PerfectLandingStreak => _perfectLandingStreak.ToString() + (strictPerfectLanding ? " (Strict)" : ""),
+            StatType.BestLandingStreak => _bestPerfectLandingStreak.ToString(),
+            StatType.AverageLandingScore => InGameStatsUtils.Percentile(_averageLandingScore),
             StatType.DistanceTravelled => InGameStatsUtils.GetTotalDistance().ToString("F1") + " m",
             StatType.GroundDistanceTravelled => InGameStatsUtils.GetGroundDistance().ToString("F1") + " m",
             StatType.AirDistanceTravelled => InGameStatsUtils.GetAirDistance().ToString("F1") + " m",
@@ -344,11 +344,11 @@ public class InGameStats : MonoBehaviour {
             StatType.Shard => RunHandler.isEndless ? "Endless" : (RunHandler.RunData.shardID + 1).ToString(),
             StatType.Level => InGameStatsUtils.GetLevelStats(),
             StatType.Seed => RunHandler.RunData.currentSeed.ToString(),
-            StatType.NoDeath => noDeath ? "Yes" : "No",
-            StatType.NoItems => noItems ? "Yes" : "No",
-            StatType.NoHit => noHit ? "Yes" : "No",
-            StatType.OnlyPerfectLanding => onlyPerfectLanding ? "Yes" : "No",
-            StatType.OnlySRanks => onlySRanks ? "Yes" : "No",
+            StatType.NoDeath => _noDeath ? "Yes" : "No",
+            StatType.NoItems => _noItems ? "Yes" : "No",
+            StatType.NoHit => _noHit ? "Yes" : "No",
+            StatType.OnlyPerfectLanding => _onlyPerfectLanding ? "Yes" : "No",
+            StatType.OnlySRanks => _onlySRanks ? "Yes" : "No",
             _ => "N/A"
         };
     }

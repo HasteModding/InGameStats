@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.11
+
+Fix speedrunning tool compatibilty issues
+
 ### 1.10
 
 Add ability to anchor text to the right side of the screen.
