@@ -185,27 +185,27 @@ public class InGameStats : MonoBehaviour {
     private void Update() {
         if (noDeath && !InGameStatsUtils.GetNoDeath()) {
             noDeath = false;
-            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
+            if (colors && _statTexts.ContainsKey(StatType.NoDeath))
                 _statTexts[StatType.NoDeath].color = Color.red;
         }
         if (noItems && !InGameStatsUtils.GetNoItems()) {
             noItems = false;
-            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
+            if (colors && _statTexts.ContainsKey(StatType.NoItems))
                 _statTexts[StatType.NoItems].color = Color.red;
         }
         if (noHit && !InGameStatsUtils.GetDamageTaken()) {
             noHit = false;
-            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
+            if (colors && _statTexts.ContainsKey(StatType.NoHit))
                 _statTexts[StatType.NoHit].color = Color.red;
         }
         if (onlyPerfectLanding && !InGameStatsUtils.GetOnlyPerfectLanding()) {
             onlyPerfectLanding = false;
-            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
+            if (colors && _statTexts.ContainsKey(StatType.OnlyPerfectLanding))
                 _statTexts[StatType.OnlyPerfectLanding].color = Color.red;
         }
         if (onlySRanks && !InGameStatsUtils.GetOnlySRank()) {
             onlySRanks = false;
-            if (colors && _statTexts.ContainsKey(StatType.PerfectLandingStreak))
+            if (colors && _statTexts.ContainsKey(StatType.OnlySRanks))
                 _statTexts[StatType.OnlySRanks].color = Color.red;
         }
 
