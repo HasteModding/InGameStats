@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.12
+
+Added speedometer
+
 ### 1.11
 
 Fix speedrunning tool compatibilty issues
@@ -111,6 +115,7 @@ Opt-out statistics you don't care about.
     [*]Max Health
     [*]Max Energy
     [*]Pickup Range
+    [*]Speed
     [*]Collapse Speed
 [/list]
 
@@ -166,6 +171,7 @@ Opt-out statistics you don't care about.
 - Max Health
 - Max Energy
 - Pickup Range
+- Speed
 - Collapse Speed
 
 ## Seeds Helpers

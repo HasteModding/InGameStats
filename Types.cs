@@ -16,6 +16,7 @@ public enum StatType {
     MaxHealth,
     MaxEnergy,
     PickupRange,
+    Speed,
     LevelSpeed,
     Shard,
     Level,
