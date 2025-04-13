@@ -62,6 +62,7 @@ public class InGameStats : MonoBehaviour {
         StatType.MaxHealth,
         StatType.MaxEnergy,
         StatType.PickupRange,
+        StatType.Speed,
         StatType.LevelSpeed,
         StatType.Shard,
         StatType.Level,
@@ -116,14 +117,15 @@ public class InGameStats : MonoBehaviour {
         if ((float) sinceGroundedBeforeLandingField.GetValue(landing) > 0.6f) {
             // Update the average landing score and count
             float landingScore = (float) landingScoreField.GetValue(landing);
+            float difficultyTweak = Mathf.Lerp(-0.05f, 0.0f, GameDifficulty.currentDif.landingPresicion);
             _landingCount++;
             _averageLandingScore += (landingScore - _averageLandingScore) / _landingCount;
             // Update the perfect landing streaks if in strict mode
             if (!strictPerfectLanding) return;
             LandingType landingType = LandingType.Bad;
-            if (landingScore >= 0.7f) landingType = LandingType.Ok;
-            if (landingScore >= 0.9f) landingType = LandingType.Good;
-            if (landingScore >= 0.95f) landingType = LandingType.Perfect;
+            if (landingScore >= 0.7f + difficultyTweak) landingType = LandingType.Ok;
+            if (landingScore >= 0.9f + difficultyTweak) landingType = LandingType.Good;
+            if (landingScore >= 0.95f + difficultyTweak) landingType = LandingType.Perfect;
             HandleLanding(landingType);
         }
     }
@@ -340,6 +342,7 @@ public class InGameStats : MonoBehaviour {
             StatType.MaxHealth => InGameStatsUtils.ComputeStatValue(player.stats.maxHealth).ToString("F1"),
             StatType.MaxEnergy => InGameStatsUtils.ComputeStatValue(player.stats.maxEnergy).ToString("F1"),
             StatType.PickupRange => InGameStatsUtils.Percentile(InGameStatsUtils.ComputeStatValue(player.stats.sparkPickupRange)),
+            StatType.Speed => player.character.refs.rig.velocity.magnitude.ToString("F1") + " m/s",
             StatType.LevelSpeed => RunHandler.GetLevelSpeed().ToString("F1") + " m/s",
             StatType.Shard => RunHandler.isEndless ? "Endless" : (RunHandler.RunData.shardID + 1).ToString(),
             StatType.Level => InGameStatsUtils.GetLevelStats(),

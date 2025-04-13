@@ -256,6 +256,11 @@ public class PickupRangeSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class SpeedSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.Speed;
+}
+
+[HasteSetting]
 public class LevelSpeedSetting : EnableStatSetting {
     protected override StatType StatType => StatType.LevelSpeed;
 }
