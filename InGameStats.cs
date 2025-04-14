@@ -179,6 +179,7 @@ public class InGameStats : MonoBehaviour {
         // Set up the Canvas
         _canvas = GetComponent<Canvas>();
         _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        _canvas.sortingOrder = 1500;
 
         CanvasScaler canvasScaler = GetComponent<CanvasScaler>();
         canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
