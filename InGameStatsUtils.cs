@@ -185,6 +185,7 @@ public static class InGameStatsUtils {
         { StatType.PickupRange, "Pickup Range" },
         { StatType.Speed, "Speed" },
         { StatType.LevelSpeed, "Collapse Speed" },
+        { StatType.PropBudget, "Obstacle Density" },
         { StatType.Shard, "Shard" },
         { StatType.Level, "Level" },
         { StatType.Seed, "Seed" },

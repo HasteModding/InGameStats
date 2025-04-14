@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.13
+
+Added Obstacle Density
+
 ### 1.12
 
 Added speedometer
@@ -117,6 +121,7 @@ Opt-out statistics you don't care about.
     [*]Pickup Range
     [*]Speed
     [*]Collapse Speed
+    [*]Obstacle Density
 [/list]
 
 [h2]Seeds Helpers[/h2]
@@ -173,6 +178,7 @@ Opt-out statistics you don't care about.
 - Pickup Range
 - Speed
 - Collapse Speed
+- Obstacle Density
 
 ## Seeds Helpers
 

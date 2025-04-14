@@ -18,6 +18,7 @@ public enum StatType {
     PickupRange,
     Speed,
     LevelSpeed,
+    PropBudget,
     Shard,
     Level,
     Seed,
