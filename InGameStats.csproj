@@ -12,4 +12,10 @@
     <DebugType>none</DebugType>
     <Version>1.11</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="InGameStats.localization.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
