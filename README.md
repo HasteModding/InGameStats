@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.14
+
+Make UI visible over all screens
+
 ### 1.13
 
 Added Obstacle Density
