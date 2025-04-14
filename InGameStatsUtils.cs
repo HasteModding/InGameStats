@@ -1,5 +1,8 @@
 using System.Reflection;
+using Landfall.Haste;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Tables;
 
 namespace InGameStats;
 
@@ -167,31 +170,42 @@ public static class InGameStatsUtils {
         return true;
     }
 
+    internal static LocalizedString TryGetLocalizedString(string key, string fallback = "") {
+        TableReference tableReference = (TableReference) "InGameStats";
+        TableEntryReference tableEntryReference = (TableEntryReference) key;
+        LocalizedString title = new(tableReference, tableEntryReference);
+        return
+            title.TableReference.ReferenceType != TableReference.Type.Empty &&
+            title.TableEntryReference.ReferenceType != TableEntryReference.Type.Empty
+                ? title
+                : new UnlocalizedString(fallback);
+    }
+
     /// <summary>
     /// Dictionary of stat types and their display names.
     /// </summary>
-    public static readonly Dictionary<StatType, string> statDisplayNames = new() {
-        { StatType.PerfectLandingStreak, "Perfect Land. Streak" },
-        { StatType.BestLandingStreak, "Best Land. Streak" },
-        { StatType.AverageLandingScore, "Average Land. Score" },
-        { StatType.DistanceTravelled, "Distance" },
-        { StatType.GroundDistanceTravelled, "Ground Distance" },
-        { StatType.AirDistanceTravelled, "Air Distance" },
-        { StatType.Luck, "Luck" },
-        { StatType.Boost, "Boost" },
-        { StatType.Health, "Health" },
-        { StatType.MaxHealth, "Max Health" },
-        { StatType.MaxEnergy, "Max Energy" },
-        { StatType.PickupRange, "Pickup Range" },
-        { StatType.Speed, "Speed" },
-        { StatType.LevelSpeed, "Collapse Speed" },
-        { StatType.Shard, "Shard" },
-        { StatType.Level, "Level" },
-        { StatType.Seed, "Seed" },
-        { StatType.NoHit, "No Hit" },
-        { StatType.NoDeath, "No Death" },
-        { StatType.NoItems, "No Items" },
-        { StatType.OnlyPerfectLanding, "Only Perfect Landing" },
-        { StatType.OnlySRanks, "Only S Ranks" },
+    public static readonly Dictionary<StatType, LocalizedString> statDisplayNames = new() {
+        { StatType.PerfectLandingStreak, TryGetLocalizedString("PerfectLandingStreak", "Perfect Land. Streak") },
+        { StatType.BestLandingStreak, TryGetLocalizedString("BestLandingStreak", "Best Land. Streak") },
+        { StatType.AverageLandingScore, TryGetLocalizedString("AverageLandingScore", "Average Land. Score") },
+        { StatType.DistanceTravelled, TryGetLocalizedString("DistanceTravelled", "Distance") },
+        { StatType.GroundDistanceTravelled, TryGetLocalizedString("GroundDistanceTravelled", "Ground Distance") },
+        { StatType.AirDistanceTravelled, TryGetLocalizedString("AirDistanceTravelled", "Air Distance") },
+        { StatType.Luck, TryGetLocalizedString("Luck", "Luck") },
+        { StatType.Boost, TryGetLocalizedString("Boost", "Boost") },
+        { StatType.Health, TryGetLocalizedString("Health", "Health") },
+        { StatType.MaxHealth, TryGetLocalizedString("MaxHealth", "Max Health") },
+        { StatType.MaxEnergy, TryGetLocalizedString("MaxEnergy", "Max Energy") },
+        { StatType.PickupRange, TryGetLocalizedString("PickupRange", "Pickup Range") },
+        { StatType.Speed, TryGetLocalizedString("Speed", "Speed") },
+        { StatType.LevelSpeed, TryGetLocalizedString("LevelSpeed", "Collapse Speed") },
+        { StatType.Shard, TryGetLocalizedString("Shard", "Shard") },
+        { StatType.Level, TryGetLocalizedString("Level", "Level") },
+        { StatType.Seed, TryGetLocalizedString("Seed", "Seed") },
+        { StatType.NoHit, TryGetLocalizedString("NoHit", "No Hit") },
+        { StatType.NoDeath, TryGetLocalizedString("NoDeath", "No Death") },
+        { StatType.NoItems, TryGetLocalizedString("NoItems", "No Items") },
+        { StatType.OnlyPerfectLanding, TryGetLocalizedString("OnlyPerfectLanding", "Only Perfect Landing") },
+        { StatType.OnlySRanks, TryGetLocalizedString("OnlySRanks", "Only S Ranks") },
     };
 }

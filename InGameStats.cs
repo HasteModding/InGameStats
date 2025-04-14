@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Reflection;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Tables;
 
 namespace InGameStats;
 
@@ -214,11 +216,15 @@ public class InGameStats : MonoBehaviour {
         // Update the stat texts with the current values
         foreach (StatType stat in enabledStats)
             if (_statTexts.TryGetValue(stat, out TextMeshProUGUI? text) && text != null) {
+                string titleString =
+                    InGameStatsUtils.statDisplayNames.TryGetValue(stat, out LocalizedString title)
+                        ? title.GetLocalizedString()
+                        : stat.ToString();
                 try {
                     string value = GetStatValue(stat);
-                    text.text = $"{InGameStatsUtils.statDisplayNames[stat]}: {value}";
+                    text.text = $"{titleString}: {value}";
                 } catch {
-                    text.text = $"{InGameStatsUtils.statDisplayNames[stat]}: N/A";
+                    text.text = $"{titleString}: N/A";
                 }
             }
     }
@@ -322,6 +328,9 @@ public class InGameStats : MonoBehaviour {
         }
     }
 
+    internal static LocalizedString failedString = InGameStatsUtils.TryGetLocalizedString("Failed", "Failed");
+    internal static LocalizedString successString = InGameStatsUtils.TryGetLocalizedString("Yes", "Yes");
+
     /// <summary>
     /// Gets the value of a specific stat based on the provided StatType.
     /// </summary>
@@ -347,11 +356,11 @@ public class InGameStats : MonoBehaviour {
             StatType.Shard => RunHandler.isEndless ? "Endless" : (RunHandler.RunData.shardID + 1).ToString(),
             StatType.Level => InGameStatsUtils.GetLevelStats(),
             StatType.Seed => RunHandler.RunData.currentSeed.ToString(),
-            StatType.NoDeath => _noDeath ? "Yes" : "No",
-            StatType.NoItems => _noItems ? "Yes" : "No",
-            StatType.NoHit => _noHit ? "Yes" : "No",
-            StatType.OnlyPerfectLanding => _onlyPerfectLanding ? "Yes" : "No",
-            StatType.OnlySRanks => _onlySRanks ? "Yes" : "No",
+            StatType.NoDeath => (_noDeath ? successString : failedString).GetLocalizedString(),
+            StatType.NoItems => (_noItems ? successString : failedString).GetLocalizedString(),
+            StatType.NoHit => (_noHit ? successString : failedString).GetLocalizedString(),
+            StatType.OnlyPerfectLanding => (_onlyPerfectLanding ? successString : failedString).GetLocalizedString(),
+            StatType.OnlySRanks => (_onlySRanks ? successString : failedString).GetLocalizedString(),
             _ => "N/A"
         };
     }

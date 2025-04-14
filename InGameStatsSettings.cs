@@ -14,7 +14,7 @@ public class XBaseOffsetSetting : FloatSetting, IExposedSetting {
         InGameStats.Instance.CreateStatUI();
     }
     protected override float GetDefaultValue() => 10f;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("X Base Offset");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("XOffset", "X Base Offset");
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
     protected override float2 GetMinMaxValue() => new (0f, Screen.width);
@@ -33,7 +33,7 @@ public class YBaseOffsetSetting : FloatSetting, IExposedSetting {
         InGameStats.Instance.CreateStatUI();
     }
     protected override float GetDefaultValue() => 0f;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Y Base Offset");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("YOffset", "Y Base Offset");
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
     protected override float2 GetMinMaxValue() => new (0f, Screen.height);
@@ -53,7 +53,7 @@ public class FontSizeSetting : IntSetting, IExposedSetting {
         InGameStats.Instance.CreateStatUI();
     }
     protected override int GetDefaultValue() => 12;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Font Size");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("FontSize", "Font Size");
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
     public override void Load(ISettingsSaveLoad loader) {
@@ -65,8 +65,8 @@ public class FontSizeSetting : IntSetting, IExposedSetting {
 
 [HasteSetting]
 public class RightSideSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Left Side");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("Right Side");
+    public override LocalizedString OffString { get; } = InGameStatsUtils.TryGetLocalizedString("LeftSide", "Left Side");
+    public override LocalizedString OnString { get; } = InGameStatsUtils.TryGetLocalizedString("RightSide", "Right Side");
     public override void ApplyValue() {
         Debug.Log($"RightSide: {Value}");
         InGameStats.Instance.rightSide = Value;
@@ -74,7 +74,7 @@ public class RightSideSetting : BoolSetting, IExposedSetting {
     }
     protected override bool GetDefaultValue() => false;
     public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Right Side");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("DisplaySide", "Display Side");
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
@@ -85,8 +85,8 @@ public class RightSideSetting : BoolSetting, IExposedSetting {
 
 [HasteSetting]
 public class FontColorSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Uncolorized");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("Colorized");
+    public override LocalizedString OffString { get; } = InGameStatsUtils.TryGetLocalizedString("Uncolorized", "Uncolorized");
+    public override LocalizedString OnString { get; } = InGameStatsUtils.TryGetLocalizedString("Colorized", "Colorized");
     public override void ApplyValue() {
         Debug.Log($"FontColor: {Value}");
         InGameStats.Instance.colors = Value;
@@ -94,7 +94,7 @@ public class FontColorSetting : BoolSetting, IExposedSetting {
     }
     protected override bool GetDefaultValue() => true;
     public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Colorized Stats");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("StatsColor", "Stats Color");
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
@@ -105,8 +105,8 @@ public class FontColorSetting : BoolSetting, IExposedSetting {
 
 [HasteSetting]
 public class CustomFontSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Default Font");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("Game Font");
+    public override LocalizedString OffString { get; } = InGameStatsUtils.TryGetLocalizedString("DefaultFont", "Default Font");
+    public override LocalizedString OnString { get; } = InGameStatsUtils.TryGetLocalizedString("GameFont", "Game Font");
     public override void ApplyValue() {
         Debug.Log($"CustomFont: {Value}");
         InGameStats.Instance.font = Value;
@@ -114,7 +114,7 @@ public class CustomFontSetting : BoolSetting, IExposedSetting {
     }
     protected override bool GetDefaultValue() => true;
     public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Custom Font");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("CustomFont", "Custom Font");
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
@@ -144,14 +144,14 @@ public class PerfectLandingStreakSetting : EnumSetting<PerfectLandingStreakType>
         InGameStats.Instance.CreateStatUI();
     }
     protected override PerfectLandingStreakType GetDefaultValue() => PerfectLandingStreakType.Standard;
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Perfect Landing Streak Mode");
+    public LocalizedString GetDisplayName() => InGameStatsUtils.TryGetLocalizedString("PerfectLandingStreakMode", "Perfect Landing Streak Mode");
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
     public override List<LocalizedString> GetLocalizedChoices() {
         return new List<LocalizedString> {
-            new UnlocalizedString("None"),
-            new UnlocalizedString("Standard"),
-            new UnlocalizedString("Strict")
+            InGameStatsUtils.TryGetLocalizedString("Hidden", "Hidden"),
+            InGameStatsUtils.TryGetLocalizedString("Standard", "Standard"),
+            InGameStatsUtils.TryGetLocalizedString("Strict", "Strict")
         };
     }
 
@@ -176,8 +176,8 @@ public class PerfectLandingStreakSetting : EnumSetting<PerfectLandingStreakType>
 }
 
 public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Hidden");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("Shown");
+    public override LocalizedString OffString { get; } = InGameStatsUtils.TryGetLocalizedString("Hidden", "Hidden");
+    public override LocalizedString OnString { get; } = InGameStatsUtils.TryGetLocalizedString("Shown", "Shown");
     public override void ApplyValue() {
         Debug.Log($"{InGameStatsUtils.statDisplayNames[StatType]}: {Value}");
         InGameStats.Instance.enabledStats.Remove(StatType);
@@ -189,7 +189,7 @@ public abstract class EnableStatSetting : BoolSetting, IExposedSetting {
     public string GetCategory() => InGameStatsProgram.GetCategory();
 
     protected abstract StatType StatType { get; }
-    public LocalizedString GetDisplayName() => new UnlocalizedString(InGameStatsUtils.statDisplayNames[StatType]);
+    public LocalizedString GetDisplayName() => InGameStatsUtils.statDisplayNames[StatType];
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
