@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.18] - 15.04.2025
+
+Add center alignment option
+
 ## [1.17] - 15.04.2025
 
 Add ability to hide stats when not in run
