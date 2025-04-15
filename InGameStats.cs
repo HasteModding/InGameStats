@@ -43,6 +43,10 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public bool colors = true;
     /// <summary>
+    /// Indicates if the stats should be displayed only in runs.
+    /// </summary>
+    public bool onlyInRun = true;
+    /// <summary>
     /// Indicates if the game font should be used for the stats text.
     /// </summary>
     public bool font = true;
@@ -217,11 +221,17 @@ public class InGameStats : MonoBehaviour {
         // Update the stat texts with the current values
         foreach (StatType stat in enabledStats)
             if (_statTexts.TryGetValue(stat, out TextMeshProUGUI? text) && text != null) {
-                try {
-                    string value = GetStatValue(stat);
-                    text.text = $"{InGameStatsUtils.statDisplayNames[stat]}: {value}";
-                } catch {
-                    text.text = $"{InGameStatsUtils.statDisplayNames[stat]}: N/A";
+                if (!onlyInRun || RunHandler.InRun)
+                    try {
+                        string value = GetStatValue(stat);
+                        text.text = $"{InGameStatsUtils.statDisplayNames[stat]}: {value}";
+                    } catch {
+                        text.text = $"{InGameStatsUtils.statDisplayNames[stat]}: N/A";
+                    } finally {
+                        text.gameObject.SetActive(true);
+                    }
+                else {
+                    text.gameObject.SetActive(false);
                 }
             }
     }

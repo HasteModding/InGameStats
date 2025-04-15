@@ -7,6 +7,24 @@ using Zorro.Settings;
 namespace InGameStats;
 
 [HasteSetting]
+public class OnlyInRunSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("Always Displayed");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("In-Run Only");
+    public override void ApplyValue() {
+        Debug.Log($"OnlyInRun: {Value}");
+        InGameStats.Instance.onlyInRun = Value;
+    }
+    protected override bool GetDefaultValue() => false;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Only Display During Runs");
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.onlyInRun = Value;
+    }
+}
+
+[HasteSetting]
 public class XBaseOffsetSetting : FloatSetting, IExposedSetting {
     public override void ApplyValue() {
         Debug.Log($"XBaseOffset: {Value}");

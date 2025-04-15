@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.17
+
+Add ability to hide stats when not in run
+
 ### 1.16
 
 Added Next Level Display
