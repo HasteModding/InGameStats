@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.16
+
+Added Next Level Display
+
 ### 1.15
 
 Fix issue where the mod doesn't let you interact with elements behind
@@ -130,6 +134,7 @@ Opt-out statistics you don't care about.
     [*]Speed
     [*]Collapse Speed
     [*]Obstacle Density
+    [*]Upcoming Level
 [/list]
 
 [h2]Seeds Helpers[/h2]
@@ -187,6 +192,7 @@ Opt-out statistics you don't care about.
 - Speed
 - Collapse Speed
 - Obstacle Density
+- Upcoming Level
 
 ## Seeds Helpers
 

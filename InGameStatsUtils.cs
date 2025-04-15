@@ -83,6 +83,24 @@ public static class InGameStatsUtils {
         }
     }
 
+    public static string GetUpcomingLevelStats() {
+        Queue<LevelSelectionNode.Data> nodes = RunHandler.RunData.QueuedNodes;
+        if (nodes.Count == 0) {
+            return "No planned levels";
+        }
+        LevelSelectionNode.Data node = nodes.Peek();
+        LevelSelectionNode.NodeType nodeType = node.Type;
+        return nodeType switch {
+            LevelSelectionNode.NodeType.Default => "Fragment",
+            LevelSelectionNode.NodeType.Shop => "Shop",
+            LevelSelectionNode.NodeType.Challenge => "Challenge",
+            LevelSelectionNode.NodeType.Encounter => "Encounter",
+            LevelSelectionNode.NodeType.Boss => "Boss",
+            LevelSelectionNode.NodeType.RestStop => "Rest",
+            _ => nodeType.ToString(),
+        };
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -186,6 +204,7 @@ public static class InGameStatsUtils {
         { StatType.Speed, "Speed" },
         { StatType.LevelSpeed, "Collapse Speed" },
         { StatType.PropBudget, "Obstacle Density" },
+        { StatType.UpcomingLevel, "Upcoming Level" },
         { StatType.Shard, "Shard" },
         { StatType.Level, "Level" },
         { StatType.Seed, "Seed" },
