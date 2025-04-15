@@ -265,6 +265,7 @@ public class InGameStats : MonoBehaviour {
             text.color = Color.white;
             text.outlineColor = Color.black;
             text.text = "N/A";
+            text.raycastTarget = false;
 
             if (font) {
                 // Set the font asset if it is not already set

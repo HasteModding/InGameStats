@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 1.15
+
+Fix issue where the mod doesn't let you interact with elements behind
+
 ### 1.14
 
 Make UI visible over all screens
