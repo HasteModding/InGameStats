@@ -19,6 +19,7 @@ public enum StatType {
     Speed,
     LevelSpeed,
     PropBudget,
+    UpcomingLevel,
     Shard,
     Level,
     Seed,

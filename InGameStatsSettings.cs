@@ -266,6 +266,11 @@ public class LevelSpeedSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class UpcomingLevelSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.UpcomingLevel;
+}
+
+[HasteSetting]
 public class ShardSetting : EnableStatSetting {
     protected override StatType StatType => StatType.Shard;
 }
