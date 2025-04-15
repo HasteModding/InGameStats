@@ -128,6 +128,26 @@ public class FontColorSetting : BoolSetting, IExposedSetting {
 }
 
 [HasteSetting]
+public class TextOutlineSetting : BoolSetting, IExposedSetting {
+    public override LocalizedString OffString { get; } = new UnlocalizedString("No Outline");
+    public override LocalizedString OnString { get; } = new UnlocalizedString("Outline");
+    public override void ApplyValue() {
+        Debug.Log($"TextOutline: {Value}");
+        InGameStats.Instance.outline = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+    protected override bool GetDefaultValue() => true;
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Outline Text");
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.outline = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+}
+
+[HasteSetting]
 public class CustomFontSetting : BoolSetting, IExposedSetting {
     public override LocalizedString OffString { get; } = new UnlocalizedString("Default Font");
     public override LocalizedString OnString { get; } = new UnlocalizedString("Game Font");

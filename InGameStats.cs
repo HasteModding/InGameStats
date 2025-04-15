@@ -43,6 +43,10 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public bool colors = true;
     /// <summary>
+    /// Indicates if the stats should be outlined.
+    /// </summary>
+    public bool outline = true;
+    /// <summary>
     /// Indicates if the stats should be displayed only in runs.
     /// </summary>
     public bool onlyInRun = true;
@@ -338,6 +342,10 @@ public class InGameStats : MonoBehaviour {
                         text.color = _onlySRanks ? Color.green : Color.red;
                         break;
                 }
+            }
+
+            if (outline) {
+                text.outlineWidth = 0.5f;
             }
 
             _statTexts[stat] = text;

@@ -1,12 +1,16 @@
 # Changelog
 
+## [1.19] - 15.04.2025
+
+Added outline text option
+
 ## [1.18] - 15.04.2025
 
-Add center alignment option
+Added center alignment option
 
 ## [1.17] - 15.04.2025
 
-Add ability to hide stats when not in run
+Added ability to hide stats when not in run
 
 ## [1.16] - 15.04.2025
 
