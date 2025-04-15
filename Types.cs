@@ -31,10 +31,19 @@ public enum StatType {
 }
 
 /// <summary>
-/// Enum of available stats
+/// Enum of available perfect landing detection mode
 /// </summary>
 public enum PerfectLandingStreakType {
     None,
     Standard,
     Strict,
+}
+
+/// <summary>
+/// Enum of available alignment modes
+/// </summary>
+public enum AlignmentMode {
+    Left,
+    Right,
+    Center,
 }

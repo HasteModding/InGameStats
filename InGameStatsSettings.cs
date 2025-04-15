@@ -82,21 +82,27 @@ public class FontSizeSetting : IntSetting, IExposedSetting {
 }
 
 [HasteSetting]
-public class RightSideSetting : BoolSetting, IExposedSetting {
-    public override LocalizedString OffString { get; } = new UnlocalizedString("Left Side");
-    public override LocalizedString OnString { get; } = new UnlocalizedString("Right Side");
+public class AlignmentSetting : EnumSetting<AlignmentMode>, IExposedSetting {
     public override void ApplyValue() {
-        Debug.Log($"RightSide: {Value}");
-        InGameStats.Instance.rightSide = Value;
+        Debug.Log($"Alignment: {Value}");
+        InGameStats.Instance.alignment = Value;
         InGameStats.Instance.CreateStatUI();
     }
-    protected override bool GetDefaultValue() => false;
+    protected override AlignmentMode GetDefaultValue() => AlignmentMode.Left;
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Alignment Mode");
     public string GetCategory() => InGameStatsProgram.GetCategory();
-    public LocalizedString GetDisplayName() => new UnlocalizedString("Right Side");
+
+    public override List<LocalizedString> GetLocalizedChoices() {
+        return new List<LocalizedString> {
+            new UnlocalizedString("Left Side"),
+            new UnlocalizedString("Right Side"),
+            new UnlocalizedString("Centered")
+        };
+    }
 
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
-        InGameStats.Instance.rightSide = Value;
+        InGameStats.Instance.alignment = Value;
         InGameStats.Instance.CreateStatUI();
     }
 }
