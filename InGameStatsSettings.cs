@@ -284,6 +284,11 @@ public class LevelSpeedSetting : EnableStatSetting {
 }
 
 [HasteSetting]
+public class PropBudgetSetting : EnableStatSetting {
+    protected override StatType StatType => StatType.PropBudget;
+}
+
+[HasteSetting]
 public class UpcomingLevelSetting : EnableStatSetting {
     protected override StatType StatType => StatType.UpcomingLevel;
 }
