@@ -55,9 +55,13 @@ public class InGameStats : MonoBehaviour {
     /// </summary>
     public bool font = true;
     /// <summary>
-    /// This list contains the StatType enum values for the stats that will be displayed.
+    /// The Progression mode for item unlocks.
     /// </summary>
-    public List<StatType> enabledStats = new() {
+    public ItemUnlockProgressionMode itemUnlockProgressionMode = ItemUnlockProgressionMode.Percentage;
+    /// <summary>
+    /// This set contains the StatType enum values for the stats that will be displayed.
+    /// </summary>
+    public HashSet<StatType> enabledStats = new() {
         StatType.PerfectLandingStreak,
         StatType.BestLandingStreak,
         StatType.AverageLandingScore,
@@ -74,6 +78,7 @@ public class InGameStats : MonoBehaviour {
         StatType.LevelSpeed,
         StatType.PropBudget,
         StatType.UpcomingLevel,
+        StatType.ItemUnlockProgression,
         StatType.Shard,
         StatType.Level,
         StatType.Seed,
@@ -378,6 +383,7 @@ public class InGameStats : MonoBehaviour {
             StatType.LevelSpeed => RunHandler.GetLevelSpeed().ToString("F1") + " m/s",
             StatType.PropBudget => LevelGenerator.instance.config.keyPropBudget.ToString(),
             StatType.UpcomingLevel => RunHandler.isEndless ? "Endless" : InGameStatsUtils.GetUpcomingLevelStats(),
+            StatType.ItemUnlockProgression => InGameStatsUtils.GetItemUnlockProgression(itemUnlockProgressionMode),
             StatType.Shard => RunHandler.isEndless ? "Endless" : (RunHandler.RunData.shardID + 1).ToString(),
             StatType.Level => InGameStatsUtils.GetLevelStats(),
             StatType.Seed => RunHandler.RunData.currentSeed.ToString(),

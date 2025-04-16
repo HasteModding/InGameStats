@@ -1,5 +1,7 @@
 using System.Reflection;
+using Landfall.Haste;
 using UnityEngine;
+using Zorro.Core;
 
 namespace InGameStats;
 
@@ -101,9 +103,6 @@ public static class InGameStatsUtils {
         };
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public static string GetLevelStats() {
         int level = RunHandler.RunData.currentLevel;
         if (RunHandler.isEndless) {
@@ -116,6 +115,79 @@ public static class InGameStatsUtils {
         }
 
         return $"{level} (Boss Fight)";
+    }
+
+    internal static (int, int) GetShardStats() {
+        MetaProgression metaProgression = SingletonAsset<MetaProgression>.Instance;
+        if (metaProgression == null) {
+            return (0, 0);
+        }
+
+        int onLose = metaProgression.baseCurrencyGet;
+        int onWin = metaProgression.baseCurrencyGet + metaProgression.currencyWinBonus;
+        if (RunHandler.RunData.shardID >= PlayerProgress.CurrentUnlockedShard)
+            onWin += metaProgression.firstWinBonus;
+
+        onLose += Mathf.RoundToInt(
+            metaProgression.currencyPerDifficulty *
+            Mathf.LerpUnclamped(
+                RunHandler.config.startDifficulty,
+                RunHandler.config.endDifficulty,
+                RunHandler.GetRunProgressUnclamped()
+            ) *
+            Mathf.Clamp01(RunHandler.GetRunProgressUnclamped() * 5f)
+        ) + metaProgression.currencyPerLevel * RunHandler.RunData.currentLevel;
+
+        float onWinRunProgress = RunHandler.RunData.currentLevel < 0 || RunHandler.RunData.MaxLevels <= 1 ? 0.0f : (RunHandler.RunData.MaxLevels + 2) / Mathf.Clamp(RunHandler.RunData.MaxLevels - 1f, 1f, 10000f);
+        onWin += Mathf.RoundToInt(
+            metaProgression.currencyPerDifficulty *
+            Mathf.LerpUnclamped(
+                RunHandler.config.startDifficulty,
+                RunHandler.config.endDifficulty,
+                onWinRunProgress
+            ) *
+            Mathf.Clamp01(onWinRunProgress * 5f)
+        ) + metaProgression.currencyPerLevel * (RunHandler.RunData.MaxLevels + 1);
+
+        if (RunHandler.isEndless) {
+            onLose = Mathf.RoundToInt(onLose * metaProgression.endessMultiplier);
+            onWin = Mathf.RoundToInt(onWin * metaProgression.endessMultiplier);
+        }
+        onWin = Mathf.RoundToInt(
+            Mathf.RoundToInt(onWin * metaProgression.winMultiplier) *
+            metaProgression.totalMultiplier
+        );
+        onLose = Mathf.RoundToInt(onLose * metaProgression.totalMultiplier);
+        return (onLose, onWin);
+    }
+
+    public static string GetItemUnlockProgression(ItemUnlockProgressionMode itemUnlockProgressionMode) {
+        int resources = Mathf.RoundToInt(FactSystem.GetFact(MetaProgression.MetaProgressionResourceForItemUnlock));
+        int itemEveryCurrency = SingletonAsset<MetaProgression>.Instance.itemEveryCurrency;
+        if (RunHandler.InRun && RunHandler.lastRunState == RunHandler.LastRunState.None) {
+            (int onLose, int onWin) = GetShardStats();
+            string currentState = itemUnlockProgressionMode switch {
+                ItemUnlockProgressionMode.Percentage => $"{(float) (resources + onLose) / itemEveryCurrency * 100:F2}%",
+                ItemUnlockProgressionMode.RawValue => $"{resources + onLose}/{itemEveryCurrency}",
+                ItemUnlockProgressionMode.NumberOfItems => $"{(resources + onLose) / itemEveryCurrency} items",
+                _ => $"N/A",
+            };
+            if (RunHandler.isEndless) {
+                return currentState;
+            }
+            return currentState + itemUnlockProgressionMode switch {
+                ItemUnlockProgressionMode.Percentage => $" (+{(float) (onWin - onLose) / itemEveryCurrency * 100:F2}%)",
+                ItemUnlockProgressionMode.RawValue => $" (+{onWin - onLose})",
+                ItemUnlockProgressionMode.NumberOfItems => $" (+{(onWin - onLose + ((resources + onLose) % itemEveryCurrency)) / itemEveryCurrency})",
+                _ => $"N/A",
+            };
+        }
+        return itemUnlockProgressionMode switch {
+            ItemUnlockProgressionMode.Percentage => $"{(float) resources / itemEveryCurrency * 100:F2}%",
+            ItemUnlockProgressionMode.RawValue => $"{resources}/{itemEveryCurrency}",
+            ItemUnlockProgressionMode.NumberOfItems => $"{resources / itemEveryCurrency} items",
+            _ => $"N/A",
+        };
     }
 
     /// <summary>
@@ -205,6 +277,7 @@ public static class InGameStatsUtils {
         { StatType.LevelSpeed, "Collapse Speed" },
         { StatType.PropBudget, "Obstacle Density" },
         { StatType.UpcomingLevel, "Upcoming Level" },
+        { StatType.ItemUnlockProgression, "Item Unlock Progress" },
         { StatType.Shard, "Shard" },
         { StatType.Level, "Level" },
         { StatType.Seed, "Seed" },

@@ -202,19 +202,9 @@ public class PerfectLandingStreakSetting : EnumSetting<PerfectLandingStreakType>
     public override void Load(ISettingsSaveLoad loader) {
         base.Load(loader);
         InGameStats.Instance.enabledStats.Remove(StatType.PerfectLandingStreak);
-        switch (Value) {
-            case PerfectLandingStreakType.None:
-                InGameStats.Instance.strictPerfectLanding = false;
-                break;
-            case PerfectLandingStreakType.Standard:
-                InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
-                InGameStats.Instance.strictPerfectLanding = false;
-                break;
-            case PerfectLandingStreakType.Strict:
-                InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
-                InGameStats.Instance.strictPerfectLanding = true;
-                break;
-        }
+        if (Value != PerfectLandingStreakType.None)
+            InGameStats.Instance.enabledStats.Add(StatType.PerfectLandingStreak);
+        InGameStats.Instance.strictPerfectLanding = Value == PerfectLandingStreakType.Strict;
         InGameStats.Instance.CreateStatUI();
     }
 }
@@ -317,6 +307,39 @@ public class PropBudgetSetting : EnableStatSetting {
 [HasteSetting]
 public class UpcomingLevelSetting : EnableStatSetting {
     protected override StatType StatType => StatType.UpcomingLevel;
+}
+
+[HasteSetting]
+public class ItemUnlockProgressionSetting : EnumSetting<ItemUnlockProgressionMode>, IExposedSetting {
+    public override void ApplyValue() {
+        Debug.Log($"PerfectLandingStreak: {Value}");
+        InGameStats.Instance.enabledStats.Remove(StatType.ItemUnlockProgression);
+        if (Value != ItemUnlockProgressionMode.None)
+            InGameStats.Instance.enabledStats.Add(StatType.ItemUnlockProgression);
+        InGameStats.Instance.itemUnlockProgressionMode = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
+    protected override ItemUnlockProgressionMode GetDefaultValue() => ItemUnlockProgressionMode.Percentage;
+    public LocalizedString GetDisplayName() => new UnlocalizedString("Item Unlock Progression Mode");
+    public string GetCategory() => InGameStatsProgram.GetCategory();
+
+    public override List<LocalizedString> GetLocalizedChoices() {
+        return new List<LocalizedString> {
+            new UnlocalizedString("None"),
+            new UnlocalizedString("Percentage"),
+            new UnlocalizedString("Raw Value"),
+            new UnlocalizedString("Number of Items")
+        };
+    }
+
+    public override void Load(ISettingsSaveLoad loader) {
+        base.Load(loader);
+        InGameStats.Instance.enabledStats.Remove(StatType.PerfectLandingStreak);
+        if (Value != ItemUnlockProgressionMode.None)
+            InGameStats.Instance.enabledStats.Add(StatType.ItemUnlockProgression);
+        InGameStats.Instance.itemUnlockProgressionMode = Value;
+        InGameStats.Instance.CreateStatUI();
+    }
 }
 
 [HasteSetting]

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.20] - 17.04.2025
+
+Added Item Unlock Progression stat
+
 ## [1.19] - 15.04.2025
 
 Added outline text option

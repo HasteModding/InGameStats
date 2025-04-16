@@ -20,6 +20,7 @@ public enum StatType {
     LevelSpeed,
     PropBudget,
     UpcomingLevel,
+    ItemUnlockProgression,
     Shard,
     Level,
     Seed,
@@ -46,4 +47,14 @@ public enum AlignmentMode {
     Left,
     Right,
     Center,
+}
+
+/// <summary>
+/// Enum of available item unlock Progression modes
+/// </summary>
+public enum ItemUnlockProgressionMode {
+    None,
+    Percentage,
+    RawValue,
+    NumberOfItems,
 }
