@@ -30,6 +30,7 @@ Opt-out statistics you don't care about.
 - Collapse Speed
 - Obstacle Density
 - Upcoming Level
+- Item Unlock Progression
 
 ## Seeds Helpers
 
@@ -76,6 +77,7 @@ Opt-out statistics you don't care about.
     [*]Collapse Speed
     [*]Obstacle Density
     [*]Upcoming Level
+    [*]Item Unlock Progression
 [/list]
 
 [h2]Seeds Helpers[/h2]
@@ -134,6 +136,7 @@ Opt-out statistics you don't care about.
 - Collapse Speed
 - Obstacle Density
 - Upcoming Level
+- Item Unlock Progression
 
 ## Seeds Helpers
 
