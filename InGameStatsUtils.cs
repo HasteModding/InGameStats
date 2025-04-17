@@ -105,7 +105,7 @@ public static class InGameStatsUtils {
 
     public static string GetLevelStats() {
         int level = RunHandler.RunData.currentLevel;
-        if (RunHandler.isEndless) {
+        if (RunHandler.RunData.isEndless) {
             return $"{level} (Endless)";
         }
 
@@ -123,12 +123,12 @@ public static class InGameStatsUtils {
             return (0, 0);
         }
 
-        int onLose = metaProgression.baseCurrencyGet;
+        int onLoseOrEndless = metaProgression.baseCurrencyGet;
         int onWin = metaProgression.baseCurrencyGet + metaProgression.currencyWinBonus;
-        if (RunHandler.RunData.shardID >= PlayerProgress.CurrentUnlockedShard)
+        if (RunHandler.RunData.shardID >= PlayerProgress.CurrentUnlockedShard && !RunHandler.RunData.isEndless)
             onWin += metaProgression.firstWinBonus;
 
-        onLose += Mathf.RoundToInt(
+        onLoseOrEndless += Mathf.RoundToInt(
             metaProgression.currencyPerDifficulty *
             Mathf.LerpUnclamped(
                 RunHandler.config.startDifficulty,
@@ -149,16 +149,16 @@ public static class InGameStatsUtils {
             Mathf.Clamp01(onWinRunProgress * 5f)
         ) + metaProgression.currencyPerLevel * (RunHandler.RunData.MaxLevels + 1);
 
-        if (RunHandler.isEndless) {
-            onLose = Mathf.RoundToInt(onLose * metaProgression.endessMultiplier);
+        if (RunHandler.RunData.isEndless) {
+            onLoseOrEndless = Mathf.RoundToInt(onLoseOrEndless * metaProgression.endessMultiplier);
             onWin = Mathf.RoundToInt(onWin * metaProgression.endessMultiplier);
         }
         onWin = Mathf.RoundToInt(
             Mathf.RoundToInt(onWin * metaProgression.winMultiplier) *
             metaProgression.totalMultiplier
         );
-        onLose = Mathf.RoundToInt(onLose * metaProgression.totalMultiplier);
-        return (onLose, onWin);
+        onLoseOrEndless = Mathf.RoundToInt(onLoseOrEndless * metaProgression.totalMultiplier);
+        return (onLoseOrEndless, onWin);
     }
 
     public static string GetItemUnlockProgression(ItemUnlockProgressionMode itemUnlockProgressionMode) {
@@ -172,9 +172,9 @@ public static class InGameStatsUtils {
                 ItemUnlockProgressionMode.NumberOfItems => $"{(resources + onLose) / itemEveryCurrency} items",
                 _ => $"N/A",
             };
-            if (RunHandler.isEndless) {
+            if (RunHandler.RunData.isEndless)
                 return currentState;
-            }
+
             return currentState + itemUnlockProgressionMode switch {
                 ItemUnlockProgressionMode.Percentage => $" (+{(float) (onWin - onLose) / itemEveryCurrency * 100:F2}%)",
                 ItemUnlockProgressionMode.RawValue => $" (+{onWin - onLose})",
