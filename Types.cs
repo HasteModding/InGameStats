@@ -1,45 +1,22 @@
 using TMPro;
+using UnityEngine.Localization;
 
 namespace InGameStats;
 
-/// <summary>
-/// Enum of available stats
-/// </summary>
-public enum StatType {
-    PerfectLandingStreak,
-    BestLandingStreak,
-    AverageLandingScore,
-    DistanceTravelled,
-    GroundDistanceTravelled,
-    AirDistanceTravelled,
-    Luck,
-    Boost,
-    Health,
-    MaxHealth,
-    MaxEnergy,
-    PickupRange,
-    Speed,
-    LevelSpeed,
-    PropBudget,
-    UpcomingLevel,
-    ItemUnlockProgression,
-    Shard,
-    Level,
-    Seed,
-    NoHit,
-    NoDeath,
-    NoItems,
-    OnlyPerfectLanding,
-    OnlySRanks,
-}
+public abstract class IG_Stat {
+    public abstract bool Enabled { get; set; }
 
-/// <summary>
-/// Enum of available perfect landing detection mode
-/// </summary>
-public enum PerfectLandingStreakType {
-    None,
-    Standard,
-    Strict,
+    public abstract LocalizedString DefaultText { get; }
+    public virtual void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {}
+    public virtual void OnTextCreation(TextMeshProUGUI text, ColorizedMode colorized) {}
+    public virtual void OnTextDestroy(TextMeshProUGUI text) {}
+    public virtual void OnStartNewRun() {}
+    public virtual void OnNewLevel() {}
+    public virtual void OnSpawnedInHub() {}
+    public virtual void OnMainMenuPlayButton() {}
+    public virtual void OnLandAction(LandingType landingType, bool saved) {}
+    public virtual void OnHitLandingObjectComputed(object landing) {}
+    public virtual void OnLandingScoreComputed(float landingScore) {}
 }
 
 /// <summary>
@@ -47,26 +24,38 @@ public enum PerfectLandingStreakType {
 /// </summary>
 public enum AlignmentMode {
     Left,
-    Right,
     Center,
+    Right,
 }
 
 /// <summary>
-/// Enum of available item unlock Progression modes
+/// Enum of available colorized modes
 /// </summary>
-public enum ItemUnlockProgressionMode {
+public enum ColorizedMode {
     None,
-    Percentage,
-    RawValue,
-    NumberOfItems,
+    Colorized,
 }
 
-public abstract class Stat {
-    public abstract string DefaultName { get; }
-    public abstract bool Enabled();
-    public abstract string UpdateContent(TextMeshProUGUI text, bool colorized, bool isRightAligned);
-    public virtual void OnStartNewRun() {} // Called when a new run starts
-    public virtual void OnNewLevel() {} // Called when a new level starts
-    public virtual void OnSpawnedInHub() {} // Called when the player spawns in the hub
-    public virtual void OnMainMenuPlayButton() {} // Called when the player presses the play button in the main menu
+/// <summary>
+/// Enum of available font modes
+/// </summary>
+public enum FontMode {
+    None,
+    GameFont,
+}
+
+/// <summary>
+/// Enum of available outline modes
+/// </summary>
+public enum OutlineMode {
+    None,
+    Outline,
+}
+
+/// <summary>
+/// Enum of available display modes
+/// </summary>
+public enum DisplayMode {
+    Always,
+    InRun,
 }
