@@ -2,11 +2,8 @@
 // for InGameStats mod for Haste by Landfall Games
 
 using InGameStats;
-using Landfall.Haste;
 using TMPro;
-using UnityEngine;
 using UnityEngine.Localization;
-using Zorro.Core;
 
 public class CollapseSpeedStat : IG_Stat {
     private static bool _enabled = true;
@@ -17,15 +14,15 @@ public class CollapseSpeedStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Collapse Speed: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Collapse Speed: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "CollapseSpeed_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "CollapseSpeed_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            text.text = $"{prefix}{RunHandler.GetLevelSpeed():F1} m/s";
+            text.text = $"{prefix.GetLocalizedString()}{RunHandler.GetLevelSpeed():F1} m/s";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -39,15 +36,15 @@ public class ObstacleDensityStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Obstacle Density: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Obstacle Density: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "ObstacleDensity_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "ObstacleDensity_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            text.text = $"{prefix}{LevelGenerator.instance.config.keyPropBudget}";
+            text.text = $"{prefix.GetLocalizedString()}{LevelGenerator.instance.config.keyPropBudget}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -82,15 +79,15 @@ public class UpcomingLevelTypeStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Upcoming Level Type: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Upcoming Level Type: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "UpcomingLevelType_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "UpcomingLevelType_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            text.text = $"{prefix}{GetUpcomingLevelStats()}";
+            text.text = $"{prefix.GetLocalizedString()}{GetUpcomingLevelStats()}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }

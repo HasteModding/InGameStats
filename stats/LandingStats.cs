@@ -2,13 +2,11 @@
 // for InGameStats mod for Haste by Landfall Games
 
 using InGameStats;
-using Landfall.Haste;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
 
 public enum PL_DetectionMode {
-    None,
     Strict,
     Standard,
 }
@@ -26,17 +24,17 @@ public class PerfectLandingStreak : IG_Stat {
     }
     public static PL_DetectionMode detectionMode = PL_DetectionMode.Standard;
 
-    public override LocalizedString DefaultText => new UnlocalizedString("Perfect Landing Streak: Loaded");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "PLS_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "PLS_Prefix");
+    internal LocalizedString strictSuffix = new ("IGS_Stats", "LandingDetection_Strict");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
-        if (detectionMode == PL_DetectionMode.Standard) {
-            text.text = $"Perfect Landing Streak: {_perfectLandingStreakStandard}";
-        } else if (detectionMode == PL_DetectionMode.Strict) {
-            text.text = $"Perfect Landing Streak: {_perfectLandingStreakStrict}";
-        } else {
-            text.text = "Perfect Landing Streak: Missing Detection Mode";
-        }
+        text.text = detectionMode switch {
+            PL_DetectionMode.Standard => $"{prefix.GetLocalizedString()}{_perfectLandingStreakStandard}",
+            PL_DetectionMode.Strict => $"{prefix.GetLocalizedString()}{_perfectLandingStreakStrict} ({strictSuffix.GetLocalizedString()})",
+            _ => $"{prefix.GetLocalizedString()}ERROR",
+        };
     }
 
     public override void OnStartNewRun() {
@@ -82,17 +80,16 @@ public class BestLandingStreak : IG_Stat {
     }
     public static PL_DetectionMode detectionMode = PL_DetectionMode.Standard;
 
-    public override LocalizedString DefaultText => new UnlocalizedString("Best Landing Streak: Loaded");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "BLS_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "BLS_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
-        if (detectionMode == PL_DetectionMode.Standard) {
-            text.text = $"Best Landing Streak: {_bestLandingStreakStandard}";
-        } else if (detectionMode == PL_DetectionMode.Strict) {
-            text.text = $"Best Landing Streak: {_bestLandingStreakStrict}";
-        } else {
-            text.text = "Best Landing Streak: Missing Detection Mode";
-        }
+        text.text = detectionMode switch {
+            PL_DetectionMode.Standard => $"{prefix.GetLocalizedString()}{_bestLandingStreakStandard}",
+            PL_DetectionMode.Strict => $"{prefix.GetLocalizedString()}{_bestLandingStreakStrict}",
+            _ => $"{prefix.GetLocalizedString()}ERROR",
+        };
     }
 
     public override void OnStartNewRun() {
@@ -138,11 +135,12 @@ public class AverageLandingScore : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Average Landing Score: Loaded");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "ALS_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "ALS_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
-        text.text = $"Average Landing Score: {_averageLandingScore * 100:F2}%";
+        text.text = $"{prefix.GetLocalizedString()}{_averageLandingScore * 100:F2}%";
     }
 
     public override void OnStartNewRun() {

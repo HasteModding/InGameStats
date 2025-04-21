@@ -16,8 +16,8 @@ public class TotalDistanceTravelled : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Total Distance Travelled: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Total Distance Travelled: ");
+    public override LocalizedString DefaultText => new LocalizedString("IGS_Stats", "TD_Default");
+    internal LocalizedString prefix = new LocalizedString("IGS_Stats", "TD_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
@@ -30,7 +30,7 @@ public class TotalDistanceTravelled : IG_Stat {
         object? airValue = airDistanceField.GetValue(null);
         if (groundValue is not float groundDistanceValue || airValue is not float airDistanceValue)
             throw new InvalidCastException("Fields 'm_RUN_DistanceTravelled_Ground' or 'm_RUN_DistanceTravelled_Air' are not of type float.");
-        text.text = $"{prefix}{groundDistanceValue + airDistanceValue} m";
+        text.text = $"{prefix.GetLocalizedString()}{groundDistanceValue + airDistanceValue} m";
     }
 }
 
@@ -43,8 +43,8 @@ public class GroundDistanceTravelled : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Ground Distance Travelled: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Ground Distance Travelled: ");
+    public override LocalizedString DefaultText => new LocalizedString("IGS_Stats", "GD_Default");
+    internal LocalizedString prefix = new LocalizedString("IGS_Stats", "GD_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
@@ -55,7 +55,7 @@ public class GroundDistanceTravelled : IG_Stat {
         object? groundValue = groundDistanceField.GetValue(null);
         if (groundValue is not float groundDistanceValue)
             throw new InvalidCastException("Field 'm_RUN_DistanceTravelled_Ground' is not of type float.");
-        text.text = $"{prefix}{groundDistanceValue} m";
+        text.text = $"{prefix.GetLocalizedString()}{groundDistanceValue} m";
     }
 }
 
@@ -68,8 +68,8 @@ public class AirDistanceTravelled : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Air Distance Travelled: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Air Distance Travelled: ");
+    public override LocalizedString DefaultText => new LocalizedString("IGS_Stats", "AD_Default");
+    internal LocalizedString prefix = new LocalizedString("IGS_Stats", "AD_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
@@ -80,6 +80,6 @@ public class AirDistanceTravelled : IG_Stat {
         object? airValue = airDistanceField.GetValue(null);
         if (airValue is not float airDistanceValue)
             throw new InvalidCastException("Field 'm_RUN_DistanceTravelled_Air' is not of type float.");
-        text.text = $"{prefix}{airDistanceValue} m";
+        text.text = $"{prefix.GetLocalizedString()}{airDistanceValue} m";
     }
 }

@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace InGameStats;
 
-public static class InGameStatsUtils {
+public static class Utils {
     /// <summary>
     /// Computes the value of a stat based on its base value and multiplier.
     /// </summary>

@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Sirenix.Utilities;
-using System.Reflection;
+using UnityEngine.Localization;
 
 namespace InGameStats;
 
@@ -14,11 +13,19 @@ namespace InGameStats;
 [RequireComponent(typeof(GraphicRaycaster))]
 public class InGameStats : MonoBehaviour {
     /// <summary>
+    /// Category of the plugin for settings.
+    /// </summary>
+    public static LocalizedString Category = new ("InGameStats", "Setting_Category");
+    /// <summary>
     /// Singleton instance of the InGameStats class.
     /// This is used to access the instance of the class from other scripts.
     /// </summary>
     public static InGameStats Instance { get; private set; } = null!;
 
+    /// <summary>
+    /// Indicates if the stats should be displayed only in runs.
+    /// </summary>
+    public DisplayMode displayMode = DisplayMode.Always;
     /// <summary>
     /// The base Y offset for the stats text.
     /// </summary>
@@ -47,10 +54,6 @@ public class InGameStats : MonoBehaviour {
     /// Indicates if the stats should be outlined.
     /// </summary>
     public OutlineMode outlineMode = OutlineMode.Outline;
-    /// <summary>
-    /// Indicates if the stats should be displayed only in runs.
-    /// </summary>
-    public DisplayMode displayMode = DisplayMode.Always;
     private TMP_FontAsset _fontAsset = null!;
     /// <summary>
     /// Dictionary of types (heriting from Stat) to their TextMeshProUGUI objects.
@@ -77,7 +80,7 @@ public class InGameStats : MonoBehaviour {
             object landing = orig(self, hit);
             if (landing != null) {
                 CallOnHitLandingObjectComputed(landing);
-                float landingScore = InGameStatsUtils.ComputeLandingScore(landing);
+                float landingScore = Utils.ComputeLandingScore(landing);
                 if (landingScore >= 0) {
                     CallOnLandingScoreComputed(landingScore);
                 }
@@ -110,7 +113,7 @@ public class InGameStats : MonoBehaviour {
             RecreateUI();
         }
 
-        if (displayMode == DisplayMode.InRun && !RunHandler.InRun) {
+        if (displayMode == DisplayMode.None || displayMode == DisplayMode.InRun && !RunHandler.InRun) {
             // Hide all stats if not in run
             foreach (TextMeshProUGUI text in StatTextObjects.Values) {
                 text.gameObject.SetActive(false);

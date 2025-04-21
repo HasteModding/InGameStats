@@ -2,11 +2,8 @@
 // for InGameStats mod for Haste by Landfall Games
 
 using InGameStats;
-using Landfall.Haste;
 using TMPro;
-using UnityEngine;
 using UnityEngine.Localization;
-using Zorro.Core;
 
 public class CurrentShardStat : IG_Stat {
     internal static string GetCurrentShardNumber() {
@@ -24,15 +21,15 @@ public class CurrentShardStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Current Shard: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Current Shard: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "CurrentShard_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "CurrentShard_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            text.text = $"{prefix}{GetCurrentShardNumber()}";
+            text.text = $"{prefix.GetLocalizedString()}{GetCurrentShardNumber()}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -60,15 +57,15 @@ public class CurrentLevelStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Current Level: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Current Level: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "CurrentLevel_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "CurrentLevel_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            text.text = $"{prefix}{GetCurrentLevelNumber()}";
+            text.text = $"{prefix.GetLocalizedString()}{GetCurrentLevelNumber()}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -82,15 +79,15 @@ public class CurrentSeedStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Current Seed: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Current Seed: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "CurrentSeed_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "CurrentSeed_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            text.text = $"{prefix}{RunHandler.RunData.currentSeed}";
+            text.text = $"{prefix.GetLocalizedString()}{RunHandler.RunData.currentSeed}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }

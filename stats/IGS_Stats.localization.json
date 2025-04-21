@@ -1,0 +1,346 @@
+{
+    "Setting_Off": {
+        "default": "Hidden",
+        "en": "Hidden"
+    },
+    "Setting_On": {
+        "default": "Visible",
+        "en": "Visible"
+    },
+    "Stat_LandingDetection": {
+        "default": "Landing Detection Mode",
+        "en": "Landing Detection Mode"
+    },
+    "Stat_PerfectLandingStreak": {
+        "default": "Perfect Landing Streak",
+        "en": "Perfect Landing Streak"
+    },
+    "Stat_BestLandingStreak": {
+        "default": "Best Landing Streak",
+        "en": "Best Landing Streak"
+    },
+    "Stat_AverageLandingScore": {
+        "default": "Average Landing Score",
+        "en": "Average Landing Score"
+    },
+    "Stat_TotalDistanceTravelled": {
+        "default": "Total Distance Travelled",
+        "en": "Total Distance Travelled"
+    },
+    "Stat_GroundDistanceTravelled": {
+        "default": "Ground Distance Travelled",
+        "en": "Ground Distance Travelled"
+    },
+    "Stat_AirDistanceTravelled": {
+        "default": "Air Distance Travelled",
+        "en": "Air Distance Travelled"
+    },
+    "Stat_Luck": {
+        "default": "Luck",
+        "en": "Luck"
+    },
+    "Stat_Boost": {
+        "default": "Boost",
+        "en": "Boost"
+    },
+    "Stat_Health": {
+        "default": "Health",
+        "en": "Health"
+    },
+    "Stat_MaxHealth": {
+        "default": "Max Health",
+        "en": "Max Health"
+    },
+    "Stat_MaxEnergy": {
+        "default": "Max Energy",
+        "en": "Max Energy"
+    },
+    "Stat_PickUpRange": {
+        "default": "Pick Up Range",
+        "en": "Pick Up Range"
+    },
+    "Stat_Speed": {
+        "default": "Speed",
+        "en": "Speed"
+    },
+    "Stat_ItemUnlockProgression": {
+        "default": "Item Unlock Progression",
+        "en": "Item Unlock Progression"
+    },
+    "Stat_CollapseSpeed": {
+        "default": "Collapse Speed",
+        "en": "Collapse Speed"
+    },
+    "Stat_ObstacleDensity": {
+        "default": "Obstacle Density",
+        "en": "Obstacle Density"
+    },
+    "Stat_UpcomingLevelType": {
+        "default": "Upcoming Level Type",
+        "en": "Upcoming Level Type"
+    },
+    "Stat_CurrentShard": {
+        "default": "Current Shard",
+        "en": "Current Shard"
+    },
+    "Stat_CurrentLevel": {
+        "default": "Current Level",
+        "en": "Current Level"
+    },
+    "Stat_CurrentSeed": {
+        "default": "Current Seed",
+        "en": "Current Seed"
+    },
+    "Stat_NoHit": {
+        "default": "No Hit",
+        "en": "No Hit"
+    },
+    "Stat_NoDeath": {
+        "default": "No Death",
+        "en": "No Death"
+    },
+    "Stat_NoItem": {
+        "default": "No Item",
+        "en": "No Item"
+    },
+    "Stat_OnlyPerfectLandings": {
+        "default": "Only Perfect Landings",
+        "en": "Only Perfect Landings"
+    },
+    "Stat_OnlySRanks": {
+        "default": "Only S Ranks",
+        "en": "Only S Ranks"
+    },
+    "LandingDetection_Strict": {
+        "default": "Strict",
+        "en": "Strict"
+    },
+    "LandingDetection_Standard": {
+        "default": "Standard",
+        "en": "Standard"
+    },
+    "ItemUnlockProgression_Off": {
+        "default": "Hidden",
+        "en": "Hidden"
+    },
+    "ItemUnlockProgression_Percentage": {
+        "default": "Percentage",
+        "en": "Percentage"
+    },
+    "ItemUnlockProgression_RawValue": {
+        "default": "Raw Value",
+        "en": "Raw Value"
+    },
+    "ItemUnlockProgression_NumberOfItems": {
+        "default": "Number of Items",
+        "en": "Number of Items"
+    },
+    "PLS_Default": {
+        "default": "Perfect Landing Streak: Loaded",
+        "en": "Perfect Landing Streak: Loaded"
+    },
+    "PLS_Prefix": {
+        "default": "Perfect Landing Streak: ",
+        "en": "Perfect Landing Streak: "
+    },
+    "BLS_Default": {
+        "default": "Best Landing Streak: Loaded",
+        "en": "Best Landing Streak: Loaded"
+    },
+    "BLS_Prefix": {
+        "default": "Best Landing Streak: ",
+        "en": "Best Landing Streak: "
+    },
+    "ALS_Default": {
+        "default": "Average Landing Score: Loaded",
+        "en": "Average Landing Score: Loaded"
+    },
+    "ALS_Prefix": {
+        "default": "Average Landing Score: ",
+        "en": "Average Landing Score: "
+    },
+    "TD_Default": {
+        "default": "Total Distance Travelled: Loaded",
+        "en": "Total Distance Travelled: Loaded"
+    },
+    "TD_Prefix": {
+        "default": "Total Distance Travelled: ",
+        "en": "Total Distance Travelled: "
+    },
+    "GD_Default": {
+        "default": "Ground Distance Travelled: Loaded",
+        "en": "Ground Distance Travelled: Loaded"
+    },
+    "GD_Prefix": {
+        "default": "Ground Distance Travelled: ",
+        "en": "Ground Distance Travelled: "
+    },
+    "AD_Default": {
+        "default": "Air Distance Travelled: Loaded",
+        "en": "Air Distance Travelled: Loaded"
+    },
+    "AD_Prefix": {
+        "default": "Air Distance Travelled: ",
+        "en": "Air Distance Travelled: "
+    },
+    "Luck_Default": {
+        "default": "Luck: Loaded",
+        "en": "Luck: Loaded"
+    },
+    "Luck_Prefix": {
+        "default": "Luck: ",
+        "en": "Luck: "
+    },
+    "Boost_Default": {
+        "default": "Boost: Loaded",
+        "en": "Boost: Loaded"
+    },
+    "Boost_Prefix": {
+        "default": "Boost: ",
+        "en": "Boost: "
+    },
+    "Health_Default": {
+        "default": "Health: Loaded",
+        "en": "Health: Loaded"
+    },
+    "Health_Prefix": {
+        "default": "Health: ",
+        "en": "Health: "
+    },
+    "MaxHealth_Default": {
+        "default": "Max Health: Loaded",
+        "en": "Max Health: Loaded"
+    },
+    "MaxHealth_Prefix": {
+        "default": "Max Health: ",
+        "en": "Max Health: "
+    },
+    "MaxEnergy_Default": {
+        "default": "Max Energy: Loaded",
+        "en": "Max Energy: Loaded"
+    },
+    "MaxEnergy_Prefix": {
+        "default": "Max Energy: ",
+        "en": "Max Energy: "
+    },
+    "PickUpRange_Default": {
+        "default": "Pick Up Range: Loaded",
+        "en": "Pick Up Range: Loaded"
+    },
+    "PickUpRange_Prefix": {
+        "default": "Pick Up Range: ",
+        "en": "Pick Up Range: "
+    },
+    "Speed_Default": {
+        "default": "Speed: Loaded",
+        "en": "Speed: Loaded"
+    },
+    "Speed_Prefix": {
+        "default": "Speed: ",
+        "en": "Speed: "
+    },
+    "IUP_Default": {
+        "default": "Item Unlock Progression: Loaded",
+        "en": "Item Unlock Progression: Loaded"
+    },
+    "IUP_Prefix": {
+        "default": "Item Unlock Progression: ",
+        "en": "Item Unlock Progression: "
+    },
+    "CollapseSpeed_Default": {
+        "default": "Collapse Speed: Loaded",
+        "en": "Collapse Speed: Loaded"
+    },
+    "CollapseSpeed_Prefix": {
+        "default": "Collapse Speed: ",
+        "en": "Collapse Speed: "
+    },
+    "ObstacleDensity_Default": {
+        "default": "Obstacle Density: Loaded",
+        "en": "Obstacle Density: Loaded"
+    },
+    "ObstacleDensity_Prefix": {
+        "default": "Obstacle Density: ",
+        "en": "Obstacle Density: "
+    },
+    "UpcomingLevelType_Default": {
+        "default": "Upcoming Level Type: Loaded",
+        "en": "Upcoming Level Type: Loaded"
+    },
+    "UpcomingLevelType_Prefix": {
+        "default": "Upcoming Level Type: ",
+        "en": "Upcoming Level Type: "
+    },
+    "CurrentShard_Default": {
+        "default": "Current Shard: Loaded",
+        "en": "Current Shard: Loaded"
+    },
+    "CurrentShard_Prefix": {
+        "default": "Current Shard: ",
+        "en": "Current Shard: "
+    },
+    "CurrentLevel_Default": {
+        "default": "Current Level: Loaded",
+        "en": "Current Level: Loaded"
+    },
+    "CurrentLevel_Prefix": {
+        "default": "Current Level: ",
+        "en": "Current Level: "
+    },
+    "CurrentSeed_Default": {
+        "default": "Current Seed: Loaded",
+        "en": "Current Seed: Loaded"
+    },
+    "CurrentSeed_Prefix": {
+        "default": "Current Seed: ",
+        "en": "Current Seed: "
+    },
+    "NHT_Default": {
+        "default": "No Hit: Loaded",
+        "en": "No Hit: Loaded"
+    },
+    "NHT_Prefix": {
+        "default": "No Hit: ",
+        "en": "No Hit: "
+    },
+    "NDT_Default": {
+        "default": "No Death: Loaded",
+        "en": "No Death: Loaded"
+    },
+    "NDT_Prefix": {
+        "default": "No Death: ",
+        "en": "No Death: "
+    },
+    "NIT_Default": {
+        "default": "No Item: Loaded",
+        "en": "No Item: Loaded"
+    },
+    "NIT_Prefix": {
+        "default": "No Item: ",
+        "en": "No Item: "
+    },
+    "OPL_Default": {
+        "default": "Only Perfect Landings: Loaded",
+        "en": "Only Perfect Landings: Loaded"
+    },
+    "OPL_Prefix": {
+        "default": "Only Perfect Landings: ",
+        "en": "Only Perfect Landings: "
+    },
+    "OSR_Default": {
+        "default": "Only S Ranks: Loaded",
+        "en": "Only S Ranks: Loaded"
+    },
+    "OSR_Prefix": {
+        "default": "Only S Ranks: ",
+        "en": "Only S Ranks: "
+    },
+    "Tracker_Valid": {
+        "default": "Checked",
+        "en": "Checked"
+    },
+    "Tracker_Invalid": {
+        "default": "Failed",
+        "en": "Failed"
+    }
+}

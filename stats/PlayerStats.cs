@@ -24,16 +24,16 @@ public class LuckStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Luck: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Luck: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "Luck_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "Luck_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            string value = InGameStatsUtils.Percentile(InGameStatsUtils.ComputeStatValue(Player.localPlayer.stats.luck));
-            text.text = $"{prefix}{value}";
+            string value = Utils.Percentile(Utils.ComputeStatValue(Player.localPlayer.stats.luck));
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -47,16 +47,16 @@ public class BoostStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Boost: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Boost: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "Boost_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "Boost_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            string value = InGameStatsUtils.Percentile(Player.localPlayer.character.data.GetBoost());
-            text.text = $"{prefix}{value}";
+            string value = Utils.Percentile(Player.localPlayer.character.data.GetBoost());
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -70,16 +70,16 @@ public class HealthStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Health: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Health: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "Health_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "Health_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
             string value = $"{Player.localPlayer.data.currentHealth:F1}";
-            text.text = $"{prefix}{value}";
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -93,16 +93,16 @@ public class MaxHealthStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Max Health: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Max Health: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "MaxHealth_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "MaxHealth_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            string value = $"{InGameStatsUtils.ComputeStatValue(Player.localPlayer.stats.maxHealth):F1}";
-            text.text = $"{prefix}{value}";
+            string value = $"{Utils.ComputeStatValue(Player.localPlayer.stats.maxHealth):F1}";
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -116,16 +116,16 @@ public class MaxEnergyStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Max Energy: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Max Energy: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "MaxEnergy_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "MaxEnergy_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            string value = $"{InGameStatsUtils.ComputeStatValue(Player.localPlayer.stats.maxEnergy):F1}";
-            text.text = $"{prefix}{value}";
+            string value = $"{Utils.ComputeStatValue(Player.localPlayer.stats.maxEnergy):F1}";
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -139,16 +139,16 @@ public class PickUpRangeStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Pick-up Range: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Pick-up Range: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "PickUpRange_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "PickUpRange_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
-            string value = InGameStatsUtils.Percentile(InGameStatsUtils.ComputeStatValue(Player.localPlayer.stats.sparkPickupRange));
-            text.text = $"{prefix}{value}";
+            string value = Utils.Percentile(Utils.ComputeStatValue(Player.localPlayer.stats.sparkPickupRange));
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -162,17 +162,17 @@ public class SpeedStat : IG_Stat {
     public static void SetEnabled(bool enabled) {
         _enabled = enabled;
     }
-    public override LocalizedString DefaultText => new UnlocalizedString("Speed: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Speed: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "Speed_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "Speed_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
             // player.character.refs.rig.velocity.magnitude.ToString("F1") + " m/s",
             string value = $"{Player.localPlayer.character.refs.rig.velocity.magnitude:F1} m/s";
-            text.text = $"{prefix}{value}";
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }
@@ -261,16 +261,16 @@ public class ItemUnlockProgressionStat : IG_Stat {
     }
     public static ItemUnlockProgressionMode itemUnlockProgressionMode = ItemUnlockProgressionMode.Percentage;
 
-    public override LocalizedString DefaultText => new UnlocalizedString("Item Unlock Progression: Loaded");
-    internal LocalizedString prefix = new UnlocalizedString("Item Unlock Progression: ");
+    public override LocalizedString DefaultText => new ("IGS_Stats", "IUP_Default");
+    internal LocalizedString prefix = new ("IGS_Stats", "IUP_Prefix");
 
     public override void OnUpdate(TextMeshProUGUI? text, ColorizedMode colorized) {
         if (text == null || !Enabled) return;
         try {
             string value = GetItemUnlockProgression(itemUnlockProgressionMode);
-            text.text = $"{prefix}{value}";
+            text.text = $"{prefix.GetLocalizedString()}{value}";
         } catch {
-            text.text = $"{prefix}N/A";
+            text.text = $"{prefix.GetLocalizedString()}N/A";
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <!-- Steam Path Setup -->
     <PropertyGroup>
         <!-- On Windows: attempt to get the Steam install location from the registry -->
-        <_SteamRegPath>HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Valve\Steam</_SteamRegPath>
-        <SteamInstallPathFromRegistry Condition="'$(OS)' == 'Windows_NT'">$([MSBuild]::GetRegistryValueFromView('$(_SteamRegPath)', 'InstallPath', null, RegistryView.Registry32))</SteamInstallPathFromRegistry>
+        <_SteamRegPath>HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Valve\Steam</_SteamRegPath>	
+        <SteamInstallPathFromRegistry Condition="'$(OS)' == 'Windows_NT'">
+            $([MSBuild]::GetRegistryValueFromView('$(_SteamRegPath)', 'InstallPath', null, RegistryView.Registry32))
+        </SteamInstallPathFromRegistry>
 
         <!-- Use the registry value if available -->
         <SteamDir Condition="'$(OS)' == 'Windows_NT' and '$(SteamInstallPathFromRegistry)' != ''">
@@ -21,6 +23,17 @@
 
         <!-- Haste's App ID -->
         <HasteAppId>1796470</HasteAppId>
+
+        <HarmonyWorkshopId>3408901301</HarmonyWorkshopId>
+        <SettingsLibWorkshopId>3462196533</SettingsLibWorkshopId>
+        <InGameStatsWorkshopId>3457771863</InGameStatsWorkshopId>
+
+        <!-- turn this on if you want to use the Harmony workshop item -->
+        <EnableHarmony Condition="'$(EnableHarmony)'==''">false</EnableHarmony>
+        <!-- turn this on if you want to use the SettingsLib workshop item -->
+        <EnableSettingsLib Condition="'$(EnableSettingsLib)'==''">false</EnableSettingsLib>
+        <!-- turn this on if you want to use the in-game stats overlay -->
+        <EnableInGameStats Condition="'$(EnableInGameStats)'==''">false</EnableInGameStats>
     </PropertyGroup>
 
     <!-- Compute the path to the libraryfolders.vdf file -->
@@ -46,39 +59,54 @@
         <PropertyGroup>
             <!-- Look for the section with the HasteAppId and extract the path -->
             <LibraryPathMatch>$([System.Text.RegularExpressions.Regex]::Match('$(LibraryFileContent)', '.*"path"\s+"([^"]+)".*"$(HasteAppId)"\s+').Groups[1].Value)</LibraryPathMatch>
-
+            
             <!-- If we found a match, use it; otherwise try to extract any path -->
             <SteamLibraryPath Condition="'$(LibraryPathMatch)' != ''">$(LibraryPathMatch)</SteamLibraryPath>
             <SteamLibraryPath Condition="'$(LibraryPathMatch)' == ''">$([System.Text.RegularExpressions.Regex]::Match('$(LibraryFileContent)', '.*"path"\s+"([^"]+)"').Groups[1].Value)</SteamLibraryPath>
-
+            
             <!-- Set HasteDir and Managed DLLs path -->
             <HasteDir>$([MSBuild]::NormalizePath('$(SteamLibraryPath)', 'steamapps', 'common', 'Haste'))</HasteDir>
             <HasteManagedDir>$([MSBuild]::NormalizePath('$(HasteDir)', 'Haste_Data', 'Managed'))</HasteManagedDir>
+            <WorkshopDir>$([MSBuild]::NormalizePath('$(SteamLibraryPath)', 'steamapps', 'workshop', 'content', '$(HasteAppId)'))</WorkshopDir>
+            <HarmonyWorkshopDir>$([MSBuild]::NormalizePath('$(WorkshopDir)', '$(HarmonyWorkshopId)', '0Harmony.dll'))</HarmonyWorkshopDir>
+            <SettingsLibWorkshopDir>$([MSBuild]::NormalizePath('$(WorkshopDir)', '$(SettingsLibWorkshopId)', 'SettingsLib.dll'))</SettingsLibWorkshopDir>
+            <InGameStatsWorkshopDir>$([MSBuild]::NormalizePath('$(WorkshopDir)', '$(InGameStatsWorkshopId)', 'InGameStats.dll'))</InGameStatsWorkshopDir>
         </PropertyGroup>
 
         <Message Importance="high" Text="Extracted SteamLibraryPath: [$(SteamLibraryPath)]" />
         <Message Importance="high" Text="HasteDir: [$(HasteDir)]" />
         <Message Importance="high" Text="HasteManagedDir: [$(HasteManagedDir)]" />
+        <Message Importance="high" Text="EnableHarmony: [$(EnableHarmony)]" />
+        <Message Importance="high" Text="EnableSettingsLib: [$(EnableSettingsLib)]" />
+        <Message
+            Importance="high"
+            Text="Harmony: [$(HarmonyWorkshopDir)]"
+            Condition="'$(EnableHarmony)'=='true'" />
+        <Message
+            Importance="high"
+            Text="SettingsLib: [$(SettingsLibWorkshopDir)]"
+            Condition="'$(EnableSettingsLib)'=='true'" />
+        <Message
+            Importance="high"
+            Text="InGameStats: [$(InGameStatsWorkshopDir)]"
+            Condition="'$(EnableInGameStats)'=='true'" />
 
         <!-- Add references for Haste Managed DLLs -->
         <ItemGroup Condition="Exists('$(HasteManagedDir)')">
             <Reference Include="$(HasteManagedDir)/*.dll" Private="false" />
         </ItemGroup>
+        
+        <!-- Conditionally add references for the Harmony workshop item -->
+        <ItemGroup Condition="'$(EnableHarmony)'=='true' and Exists('$(HarmonyWorkshopDir)')">
+            <Reference Include="$(HarmonyWorkshopDir)" Private="false" />
+        </ItemGroup>
 
-        <!-- These items are output for debugging purposes -->
-        <CreateItem Include="$(HasteManagedDir)/*.dll" Condition="Exists('$(HasteManagedDir)')">
-            <Output TaskParameter="Include" ItemName="HasteDllReferences" />
-        </CreateItem>
-    </Target>
+        <ItemGroup Condition="'$(EnableSettingsLib)'=='true' and Exists('$(SettingsLibWorkshopDir)')">
+            <Reference Include="$(SettingsLibWorkshopDir)" Private="false" />
+        </ItemGroup>
 
-    <!-- Debug target for inspecting file contents and properties -->
-    <Target Name="DebugSteamProperties" DependsOnTargets="ProcessSteamLibraryPaths">
-        <Message Importance="high" Text="=== DebugSteamProperties ===" />
-        <Message Importance="high" Text="SteamInstallPathFromRegistry: [$(SteamInstallPathFromRegistry)]" />
-        <Message Importance="high" Text="SteamDir: [$(SteamDir)]" />
-        <Message Importance="high" Text="CleanSteamDir: [$(CleanSteamDir)]" />
-        <Message Importance="high" Text="LibraryFoldersFile: [$(LibraryFoldersFile)]" />
-        <Message Importance="high" Text="LibraryFileContent: [$(LibraryFileContent)]" />
-        <Message Importance="high" Text="SteamLibraryPath: [$(SteamLibraryPath)]" />
+        <ItemGroup Condition="'$(EnableInGameStats)'=='true' and Exists('$(InGameStatsWorkshopDir)')">
+            <Reference Include="$(InGameStatsWorkshopDir)" Private="false" />
+        </ItemGroup>
     </Target>
 </Project>

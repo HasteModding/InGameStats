@@ -8,6 +8,7 @@
 Move around the UI.  
 Opt-out statistics you don't care about.  
 **Fully customizable in Settings InGameStats tab**.  
+PS: Hey mod devs! Adding your own stats is possible now!  
 
 # Features
 
@@ -46,6 +47,10 @@ Opt-out statistics you don't care about.
 - Only Perfect Landing Tracker
 - Only S Ranks Tracker
 
+# Adding custom stats
+
+**Documentation available [here](docs/add_stats/DOCUMENTATION.md) (docs/add_stats/DOCUMENTATION.md)**
+
 # Steam Mod Description
 
 ```
@@ -55,6 +60,7 @@ Opt-out statistics you don't care about.
 Move around the UI.
 Opt-out statistics you don't care about.
 [b]Fully customizable in Settings InGameStats tab[/b].
+PS: Hey mod devs! Adding your own stats is possible now! Take a look on GitHub!
 
 [h1]Features[/h1]
 
@@ -114,6 +120,7 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3457771863
 Move around the UI.  
 Opt-out statistics you don't care about.  
 **Fully customizable in Settings InGameStats tab**.  
+PS: Hey mod devs! Adding your own stats is possible now! Take a look on GitHub!  
 
 # Features
 
