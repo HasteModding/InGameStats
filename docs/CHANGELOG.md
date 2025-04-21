@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0] - 21.04.2025
+
+Full Mod Rework.
+Adding custom stats now available
+Localization system working (only english is available rn, add translations through GitHub merges!)
+
 ## [1.20] - 17.04.2025
 
 Added Item Unlock Progression stat

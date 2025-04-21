@@ -1,0 +1,102 @@
+{
+    "Setting_Category": {
+        "default": "In-Game Stats",
+        "en": "In-Game Stats"
+    },
+    "UI_DisplayMode": {
+        "default": "Display Mode",
+        "en": "Display Mode"
+    },
+    "UI_OffsetX": {
+        "default": "Horizontal Offset",
+        "en": "Horizontal Offset"
+    },
+    "UI_OffsetY": {
+        "default": "Vertical Offset",
+        "en": "Vertical Offset"
+    },
+    "UI_FontSize": {
+        "default": "Font Size",
+        "en": "Font Size"
+    },
+    "UI_AlignmentMode": {
+        "default": "Alignment",
+        "en": "Alignment"
+    },
+    "UI_Colorizing": {
+        "default": "Colorizing",
+        "en": "Colorizing"
+    },
+    "UI_Font": {
+        "default": "Font",
+        "en": "Font"
+    },
+    "UI_Outline": {
+        "default": "Outline",
+        "en": "Outline"
+    },
+    "DisplayMode_Off": {
+        "default": "Hidden",
+        "en": "Hidden"
+    },
+    "DisplayMode_Always": {
+        "default": "Always",
+        "en": "Always"
+    },
+    "DisplayMode_InRun": {
+        "default": "Only In Shard",
+        "en": "Only In Shard"
+    },
+    "AlignmentMode_Left": {
+        "default": "Left",
+        "en": "Left"
+    },
+    "AlignmentMode_Center": {
+        "default": "Center",
+        "en": "Center"
+    },
+    "AlignmentMode_Right": {
+        "default": "Right",
+        "en": "Right"
+    },
+    "Colorizing_Off": {
+        "default": "White",
+        "en": "White"
+    },
+    "Colorizing_On": {
+        "default": "Colorized",
+        "en": "Colorized"
+    },
+    "Font_Unchanged": {
+        "default": "Unchanged",
+        "en": "Unchanged"
+    },
+    "Font_InGameFont": {
+        "default": "In-Game Font",
+        "en": "In-Game Font"
+    },
+    "Outline_Off": {
+        "default": "None",
+        "en": "None"
+    },
+    "Outline_On": {
+        "default": "Outline",
+        "en": "Outline"
+    },
+    "EnableAll": {
+        "default": "Enable All Stats",
+        "en": "Enable All Stats"
+    },
+    "EnableButtonText": {
+        "default": "Enable",
+        "en": "Enable"
+    },
+    "DisableAll": {
+        "default": "Disable All Stats",
+        "en": "Disable All Stats"
+    },
+    "DisableButtonText": {
+        "default": "Disable",
+        "en": "Disable"
+    }
+}
