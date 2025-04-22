@@ -1,8 +1,12 @@
 # Changelog
 
+## [2.1] - 22.04.2025
+
+Fix `only perfect landings` not working properly
+
 ## [2.0] - 21.04.2025
 
-Full Mod Rework.
+Full Mod Rework
 Adding custom stats now available
 Localization system working (only english is available rn, add translations through GitHub merges!)
 
