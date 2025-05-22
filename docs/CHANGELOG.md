@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2] - 22.05.2025
+
+Latest update compatibility changes
+
 ## [2.1] - 22.04.2025
 
 Fix `only perfect landings` not working properly

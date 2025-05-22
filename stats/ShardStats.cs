@@ -7,7 +7,7 @@ using UnityEngine.Localization;
 
 public class CurrentShardStat : IG_Stat {
     internal static string GetCurrentShardNumber() {
-        if (RunHandler.RunData.isEndless || RunHandler.RunData.isKeepRunningMode) {
+        if (RunHandler.RunData.runConfig.isEndless || RunHandler.RunData.isKeepRunningMode) {
             return "Endless";
         }
         return $"{RunHandler.RunData.shardID + 1}";
@@ -37,7 +37,7 @@ public class CurrentShardStat : IG_Stat {
 public class CurrentLevelStat : IG_Stat {
     internal static string GetCurrentLevelNumber() {
         int level = RunHandler.RunData.currentLevel;
-        if (RunHandler.RunData.isEndless || RunHandler.RunData.isKeepRunningMode) {
+        if (RunHandler.RunData.runConfig.isEndless || RunHandler.RunData.isKeepRunningMode) {
             return $"{level} (Endless)";
         }
 

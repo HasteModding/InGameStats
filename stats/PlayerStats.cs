@@ -186,7 +186,7 @@ public class ItemUnlockProgressionStat : IG_Stat {
 
         int onLoseOrEndless = metaProgression.baseCurrencyGet;
         int onWin = metaProgression.baseCurrencyGet + metaProgression.currencyWinBonus;
-        if (RunHandler.RunData.shardID >= PlayerProgress.CurrentUnlockedShard && !RunHandler.RunData.isEndless)
+        if (RunHandler.RunData.shardID >= PlayerProgress.CurrentUnlockedShard && !RunHandler.RunData.runConfig.isEndless)
             onWin += metaProgression.firstWinBonus;
 
         onLoseOrEndless += Mathf.RoundToInt(
@@ -210,7 +210,7 @@ public class ItemUnlockProgressionStat : IG_Stat {
             Mathf.Clamp01(onWinRunProgress * 5f)
         ) + metaProgression.currencyPerLevel * (RunHandler.RunData.MaxLevels + 1);
 
-        if (RunHandler.RunData.isEndless) {
+        if (RunHandler.RunData.runConfig.isEndless) {
             onLoseOrEndless = Mathf.RoundToInt(onLoseOrEndless * metaProgression.endessMultiplier);
             onWin = Mathf.RoundToInt(onWin * metaProgression.endessMultiplier);
         }
@@ -233,7 +233,7 @@ public class ItemUnlockProgressionStat : IG_Stat {
                 ItemUnlockProgressionMode.NumberOfItems => $"{(resources + onLose) / itemEveryCurrency} items",
                 _ => $"N/A",
             };
-            if (RunHandler.RunData.isEndless)
+            if (RunHandler.RunData.runConfig.isEndless)
                 return currentState;
 
             return currentState + itemUnlockProgressionMode switch {

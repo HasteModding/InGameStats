@@ -42,7 +42,7 @@ public class PerfectLandingStreak : IG_Stat {
         _perfectLandingStreakStrict = 0;
     }
 
-    public override void OnLandAction(LandingType landingType, bool saved) {
+    public override void OnLandAction(PlayerCharacter playerCharacter, LandingType landingType, bool saved) {
         if (landingType == LandingType.Perfect) {
             ++_perfectLandingStreakStandard;
         } else {
@@ -99,7 +99,7 @@ public class BestLandingStreak : IG_Stat {
         _bestLandingStreakStrict = 0;
     }
 
-    public override void OnLandAction(LandingType landingType, bool saved) {
+    public override void OnLandAction(PlayerCharacter playerCharacter, LandingType landingType, bool saved) {
         if (landingType == LandingType.Perfect) {
             ++_perfectLandingStreakStandard;
             _bestLandingStreakStandard = Mathf.Max(_bestLandingStreakStandard, _perfectLandingStreakStandard);

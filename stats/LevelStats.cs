@@ -51,7 +51,7 @@ public class ObstacleDensityStat : IG_Stat {
 
 public class UpcomingLevelTypeStat : IG_Stat {
     internal static string GetUpcomingLevelStats() {
-        if (RunHandler.RunData.isEndless || RunHandler.RunData.isKeepRunningMode) {
+        if (RunHandler.RunData.runConfig.isEndless || RunHandler.RunData.isKeepRunningMode) {
             return "Endless";
         }
         Queue<LevelSelectionNode.Data> nodes = RunHandler.RunData.QueuedNodes;
@@ -59,7 +59,7 @@ public class UpcomingLevelTypeStat : IG_Stat {
             return "No planned levels";
         }
         LevelSelectionNode.Data node = nodes.Peek();
-        LevelSelectionNode.NodeType nodeType = node.Type;
+        LevelSelectionNode.NodeType nodeType = node.type;
         return nodeType switch {
             LevelSelectionNode.NodeType.Default => "Fragment",
             LevelSelectionNode.NodeType.Shop => "Shop",

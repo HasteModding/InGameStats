@@ -275,10 +275,10 @@ public class InGameStats : MonoBehaviour {
         }
     }
 
-    internal void CallOnLandAction(LandingType landingType, bool saved) {
+    internal void CallOnLandAction(PlayerCharacter playerCharacter, LandingType landingType, bool saved) {
         foreach (IG_Stat instance in StatInstances.Values) {
             try {
-                instance.OnLandAction(landingType, saved);
+                instance.OnLandAction(playerCharacter, landingType, saved);
             } catch (Exception e) {
                 Debug.LogError($"Error in OnLandAction for {instance.GetType().Name}: {e}");
             }

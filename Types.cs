@@ -49,7 +49,7 @@ public abstract class IG_Stat {
     /// </summary>
     /// <param name="landingType">The type of landing (e.g. bad, ok, good, perfect).</param>
     /// <param name="saved">Whether the landing was saved or not.</param>
-    public virtual void OnLandAction(LandingType landingType, bool saved) {}
+    public virtual void OnLandAction(PlayerCharacter playerCharacter, LandingType landingType, bool saved) {}
     /// <summary>
     /// Called when the player hits the ground and triggers a landing event.
     /// </summary>
